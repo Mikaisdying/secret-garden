@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Plant a Flower — Secret Garden</title>
+<title data-i18n="meta.titlePlant">Plant a Flower — Secret Garden</title>
 <link rel="stylesheet" href="css/tokens.css" />
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/plant.css" />
@@ -12,9 +12,10 @@
 
 <nav class="garden-nav" aria-label="Primary">
   <div class="garden-nav__links">
-    <a href="garden.html">Garden</a>
-    <a href="plant.html" aria-current="page">Plant a Flower</a>
-    <a href="about.html">About</a>
+    <a href="garden.html" data-i18n="nav.garden">Garden</a>
+    <a href="plant.html" aria-current="page" data-i18n="nav.plant">Plant a Flower</a>
+    <a href="about.html" data-i18n="nav.about">About</a>
+    <span class="garden-nav__lang" data-lang-switcher></span>
   </div>
 </nav>
 
@@ -30,37 +31,65 @@
 
     <!-- Step 1 — draw -->
     <section class="plant-step" data-step="1">
-      <h2>Draw your flower.</h2>
-      <p class="plant-step__hint">Use your finger, mouse, or stylus. It doesn't need to be perfect.</p>
+      <h2 data-i18n="plant.step1Title">Draw your flower.</h2>
+      <p class="plant-step__hint" data-i18n="plant.step1Hint">Use your finger, mouse, or stylus. It doesn't need to be perfect.</p>
       <div class="draw-toolbar">
-        <button class="swatch is-selected" style="background:#5b6f4e" data-color="#5b6f4e" aria-label="Moss green"></button>
-        <button class="swatch" style="background:#d8a3a0" data-color="#d8a3a0" aria-label="Dusty pink"></button>
-        <button class="swatch" style="background:#c2aed1" data-color="#c2aed1" aria-label="Lavender"></button>
-        <button class="swatch" style="background:#e3b94f" data-color="#e3b94f" aria-label="Soft yellow"></button>
-        <button class="swatch" style="background:#9fc1d0" data-color="#9fc1d0" aria-label="Sky blue"></button>
-        <button class="swatch" style="background:#4a3826" data-color="#4a3826" aria-label="Ink brown"></button>
+        <button class="swatch is-selected" style="background:#5b6f4e" data-color="#5b6f4e" aria-label="Moss green" data-i18n-aria-label="plant.swatchMoss"></button>
+        <button class="swatch" style="background:#d8a3a0" data-color="#d8a3a0" aria-label="Dusty pink" data-i18n-aria-label="plant.swatchPink"></button>
+        <button class="swatch" style="background:#c2aed1" data-color="#c2aed1" aria-label="Lavender" data-i18n-aria-label="plant.swatchLavender"></button>
+        <button class="swatch" style="background:#e3b94f" data-color="#e3b94f" aria-label="Soft yellow" data-i18n-aria-label="plant.swatchYellow"></button>
+        <button class="swatch" style="background:#9fc1d0" data-color="#9fc1d0" aria-label="Sky blue" data-i18n-aria-label="plant.swatchBlue"></button>
+        <button class="swatch" style="background:#4a3826" data-color="#4a3826" aria-label="Ink brown" data-i18n-aria-label="plant.swatchBrown"></button>
+        <div class="custom-color-wrap">
+          <button
+            type="button"
+            class="swatch swatch--custom"
+            id="customColorBtn"
+            aria-label="Custom color"
+            data-i18n-aria-label="plant.customColor"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Custom color"
+            data-i18n-title="plant.customColor"
+          ></button>
+          <div class="color-popover" id="colorPopover" role="dialog" aria-label="Custom color picker" data-i18n-aria-label="plant.customColorPicker" hidden>
+            <div class="swatch color-popover__preview" id="colorPreview" aria-hidden="true"></div>
+            <div class="color-popover__row">
+              <label for="hueRange" data-i18n="plant.hue">Hue</label>
+              <input type="range" id="hueRange" min="0" max="360" step="1" value="140" />
+            </div>
+            <div class="color-popover__row">
+              <label for="satRange" data-i18n="plant.saturation">Saturation</label>
+              <input type="range" id="satRange" min="35" max="75" step="1" value="45" />
+            </div>
+            <div class="color-popover__row">
+              <label for="lightRange" data-i18n="plant.lightness">Lightness</label>
+              <input type="range" id="lightRange" min="45" max="80" step="1" value="55" />
+            </div>
+          </div>
+        </div>
         <div class="toolbar-sep"></div>
-        <label for="brushSize" class="visually-hidden">Brush size</label>
+        <label for="brushSize" class="visually-hidden" data-i18n="plant.brushSize">Brush size</label>
         <input type="range" id="brushSize" class="brush-range" min="2" max="14" value="6" />
         <div class="toolbar-sep"></div>
-        <button class="icon-btn" id="eraseBtn" aria-label="Eraser" title="Eraser">⌫</button>
-        <button class="icon-btn" id="undoBtn" aria-label="Undo" title="Undo">↶</button>
-        <button class="icon-btn" id="redoBtn" aria-label="Redo" title="Redo">↷</button>
-        <button class="icon-btn" id="clearBtn" aria-label="Clear" title="Clear">✕</button>
+        <button class="icon-btn" id="eraseBtn" aria-label="Eraser" title="Eraser" data-i18n-aria-label="plant.eraser" data-i18n-title="plant.eraser">⌫</button>
+        <button class="icon-btn" id="undoBtn" aria-label="Undo" title="Undo" data-i18n-aria-label="plant.undo" data-i18n-title="plant.undo">↶</button>
+        <button class="icon-btn" id="redoBtn" aria-label="Redo" title="Redo" data-i18n-aria-label="plant.redo" data-i18n-title="plant.redo">↷</button>
+        <button class="icon-btn" id="clearBtn" aria-label="Clear" title="Clear" data-i18n-aria-label="plant.clear" data-i18n-title="plant.clear">✕</button>
       </div>
       <div class="draw-canvas-wrap">
         <svg id="drawSvg" viewBox="0 0 120 120"></svg>
       </div>
       <div class="plant-nav">
-        <a class="btn btn--ghost" href="garden.html">Cancel</a>
-        <button class="btn btn--primary" id="toStep2" disabled>Next: choose a place</button>
+        <a class="btn btn--ghost" href="garden.html" data-i18n="plant.cancel">Cancel</a>
+        <button class="btn btn--primary" id="toStep2" disabled data-i18n="plant.step1Next">Next: choose a place</button>
       </div>
     </section>
 
     <!-- Step 2 — choose a place -->
     <section class="plant-step" data-step="2">
-      <h2>Choose a place in the garden.</h2>
-      <p class="plant-step__hint">Tap anywhere open. The small dots are flowers already growing there.</p>
+      <h2 data-i18n="plant.step2Title">Choose a place in the garden.</h2>
+      <p class="plant-step__hint" data-i18n="plant.step2Hint">Tap anywhere open. The small dots are flowers already growing there.</p>
       <div class="plot-picker" id="plotPicker">
         <svg viewBox="0 0 100 62" preserveAspectRatio="none" aria-hidden="true">
           <rect width="100" height="62" fill="#e4d79c"/>
@@ -72,48 +101,48 @@
         </div>
       </div>
       <div class="plant-nav">
-        <button class="btn btn--ghost" id="backTo1">Back</button>
-        <button class="btn btn--primary" id="toStep3" disabled>Next: name it</button>
+        <button class="btn btn--ghost" id="backTo1" data-i18n="plant.back">Back</button>
+        <button class="btn btn--primary" id="toStep3" disabled data-i18n="plant.step2Next">Next: name it</button>
       </div>
     </section>
 
     <!-- Step 3 — name -->
     <section class="plant-step" data-step="3">
-      <h2>Give your flower a name.</h2>
-      <p class="plant-step__hint">Something small and personal usually fits best.</p>
+      <h2 data-i18n="plant.step3Title">Give your flower a name.</h2>
+      <p class="plant-step__hint" data-i18n="plant.step3Hint">Something small and personal usually fits best.</p>
       <div class="field">
-        <label for="flowerName">Flower name</label>
-        <input type="text" id="flowerName" maxlength="40" placeholder="Moonflower" autocomplete="off" />
+        <label for="flowerName" data-i18n="plant.flowerNameLabel">Flower name</label>
+        <input type="text" id="flowerName" maxlength="40" placeholder="Moonflower" data-i18n-placeholder="plant.flowerNamePlaceholder" autocomplete="off" />
       </div>
       <div class="field">
-        <label for="flowerAuthor">Your name (shown as who planted it)</label>
-        <input type="text" id="flowerAuthor" maxlength="30" placeholder="Mika" autocomplete="off" />
+        <label for="flowerAuthor" data-i18n="plant.authorLabel">Your name (shown as who planted it)</label>
+        <input type="text" id="flowerAuthor" maxlength="30" placeholder="Mika" data-i18n-placeholder="plant.authorPlaceholder" autocomplete="off" />
       </div>
       <div class="plant-nav">
-        <button class="btn btn--ghost" id="backTo2">Back</button>
-        <button class="btn btn--primary" id="toStep4" disabled>Next: leave a message</button>
+        <button class="btn btn--ghost" id="backTo2" data-i18n="plant.back">Back</button>
+        <button class="btn btn--primary" id="toStep4" disabled data-i18n="plant.step3Next">Next: leave a message</button>
       </div>
     </section>
 
     <!-- Step 4 — message -->
     <section class="plant-step" data-step="4">
-      <h2>Leave something worth remembering.</h2>
-      <p class="plant-step__hint">Who is this flower for? What would you like it to say?</p>
+      <h2 data-i18n="plant.step4Title">Leave something worth remembering.</h2>
+      <p class="plant-step__hint" data-i18n="plant.step4Hint">Who is this flower for? What would you like it to say?</p>
       <div class="field">
-        <label for="flowerMessage">Your message</label>
-        <textarea id="flowerMessage" maxlength="220" placeholder="Even on the quietest nights, I hope you find something worth looking at."></textarea>
+        <label for="flowerMessage" data-i18n="plant.messageLabel">Your message</label>
+        <textarea id="flowerMessage" maxlength="220" placeholder="Even on the quietest nights, I hope you find something worth looking at." data-i18n-placeholder="plant.messagePlaceholder"></textarea>
         <div class="field__count"><span id="msgCount">0</span>/220</div>
       </div>
       <div class="plant-nav">
-        <button class="btn btn--ghost" id="backTo3">Back</button>
-        <button class="btn btn--primary" id="toStep5" disabled>Next: preview</button>
+        <button class="btn btn--ghost" id="backTo3" data-i18n="plant.back">Back</button>
+        <button class="btn btn--primary" id="toStep5" disabled data-i18n="plant.step4Next">Next: preview</button>
       </div>
     </section>
 
     <!-- Step 5 — preview + plant -->
     <section class="plant-step" data-step="5">
-      <h2>Ready to plant it?</h2>
-      <p class="plant-step__hint">This is how your flower will appear to visitors.</p>
+      <h2 data-i18n="plant.step5Title">Ready to plant it?</h2>
+      <p class="plant-step__hint" data-i18n="plant.step5Hint">This is how your flower will appear to visitors.</p>
       <div class="preview-card">
         <svg id="previewSvg" viewBox="0 0 120 120"></svg>
         <h3 id="previewName">—</h3>
@@ -121,8 +150,8 @@
         <p class="preview-card__msg" id="previewMsg">—</p>
       </div>
       <div class="plant-nav">
-        <button class="btn btn--ghost" id="backTo4">Back</button>
-        <button class="btn btn--primary" id="plantBtn">Plant it</button>
+        <button class="btn btn--ghost" id="backTo4" data-i18n="plant.back">Back</button>
+        <button class="btn btn--primary" id="plantBtn" data-i18n="plant.plantBtn">Plant it</button>
       </div>
     </section>
   </div>
@@ -131,8 +160,8 @@
 <div class="grow-confirm" id="growConfirm" hidden>
   <div>
     <svg viewBox="0 0 120 120" id="growSvg"></svg>
-    <h2>This one is planted.</h2>
-    <p class="plant-step__hint">Taking you to the garden to see it grow…</p>
+    <h2 data-i18n="plant.growTitle">This one is planted.</h2>
+    <p class="plant-step__hint" data-i18n="plant.growHint">Taking you to the garden to see it grow…</p>
   </div>
 </div>
 

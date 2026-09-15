@@ -139,9 +139,9 @@ export function suggestPlot() {
   return { x: 50, y: 55 };
 }
 
-export function formatDate(iso) {
+export function formatDate(iso, locale) {
   try {
-    return new Date(iso).toLocaleDateString(undefined, {
+    return new Date(iso).toLocaleDateString(locale, {
       year: "numeric", month: "long", day: "numeric",
     });
   } catch {

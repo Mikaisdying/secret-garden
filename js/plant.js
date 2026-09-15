@@ -1,5 +1,8 @@
 import { addFlower, getFlowers } from "./data.js";
 import { createDrawingCanvas, buildStrokePath } from "./draw.js";
+import { initI18n, t, onLanguageChange } from "./i18n/index.js";
+
+initI18n();
 
 const state = {
   step: 1,
@@ -39,13 +42,64 @@ function initCanvasOnce() {
 }
 initCanvasOnce();
 
-document.querySelectorAll(".swatch").forEach((btn) => {
+document.querySelectorAll(".swatch[data-color]").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".swatch").forEach((b) => b.classList.remove("is-selected"));
     btn.classList.add("is-selected");
     canvas.setColor(btn.dataset.color);
+    closeColorPopover();
   });
 });
+
+// ---- Custom color: hue is free across the full wheel, but saturation and
+// lightness are locked to a "safe" range via the <input type="range">'s own
+// min/max, so no combination of sliders can produce a color that clashes
+// with the garden's palette. ----
+const customColorBtn = document.getElementById("customColorBtn");
+const colorPopover = document.getElementById("colorPopover");
+const colorPreview = document.getElementById("colorPreview");
+const hueRange = document.getElementById("hueRange");
+const satRange = document.getElementById("satRange");
+const lightRange = document.getElementById("lightRange");
+
+function currentCustomHsl() {
+  return `hsl(${hueRange.value} ${satRange.value}% ${lightRange.value}%)`;
+}
+function openColorPopover() {
+  colorPopover.hidden = false;
+  customColorBtn.setAttribute("aria-expanded", "true");
+}
+function closeColorPopover() {
+  colorPopover.hidden = true;
+  customColorBtn.setAttribute("aria-expanded", "false");
+}
+function selectCustomColor() {
+  const hsl = currentCustomHsl();
+  colorPreview.style.background = hsl;
+  document.querySelectorAll(".swatch").forEach((b) => b.classList.remove("is-selected"));
+  customColorBtn.classList.add("is-selected");
+  canvas.setColor(hsl);
+}
+colorPreview.style.background = currentCustomHsl();
+
+customColorBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  selectCustomColor();
+  if (colorPopover.hidden) openColorPopover(); else closeColorPopover();
+});
+[hueRange, satRange, lightRange].forEach((input) => {
+  input.addEventListener("input", selectCustomColor);
+});
+document.addEventListener("click", (e) => {
+  if (!colorPopover.hidden && !e.target.closest(".custom-color-wrap")) closeColorPopover();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !colorPopover.hidden) {
+    closeColorPopover();
+    customColorBtn.focus();
+  }
+});
+
 document.getElementById("brushSize").addEventListener("input", (e) => {
   canvas.setSize(Number(e.target.value));
 });
@@ -132,9 +186,13 @@ function drawInto(svgEl, strokes) {
 function buildPreview() {
   drawInto(document.getElementById("previewSvg"), canvas.getStrokes());
   document.getElementById("previewName").textContent = state.name;
-  document.getElementById("previewBy").textContent = `Planted by ${state.author}`;
+  document.getElementById("previewBy").textContent = t("plant.previewBy", { author: state.author });
   document.getElementById("previewMsg").textContent = `"${state.message}"`;
 }
+
+onLanguageChange(() => {
+  if (state.step === 5) buildPreview();
+});
 
 document.getElementById("backTo4").addEventListener("click", () => goTo(4));
 

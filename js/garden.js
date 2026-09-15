@@ -1,5 +1,7 @@
 import { getFlowers, formatDate } from "./data.js";
 import { buildStrokePath, createReplayPlayer } from "./draw.js";
+import { initI18n, t, getLocale, onLanguageChange } from "./i18n/index.js";
+import { initEnvironment } from "./environment.js";
 
 const plantLayer = document.getElementById("plantLayer");
 const params = new URLSearchParams(location.search);
@@ -85,6 +87,41 @@ function spawnFireflies() {
   }
 }
 
+function spawnWindLeaves() {
+  const layer = document.getElementById("windLayer");
+  if (!layer) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const count = reduce ? 3 : 10;
+  for (let i = 0; i < count; i++) {
+    const leaf = document.createElement("div");
+    leaf.className = "wind-leaf";
+    leaf.style.left = `${-5 + Math.random() * 10}%`;
+    leaf.style.top = `${10 + Math.random() * 55}%`;
+    leaf.style.setProperty("--wx", `${50 + Math.random() * 30}vw`);
+    leaf.style.setProperty("--wy", `${(Math.random() - 0.5) * 60}px`);
+    leaf.style.setProperty("--wx2", `${90 + Math.random() * 30}vw`);
+    leaf.style.setProperty("--wy2", `${(Math.random() - 0.5) * 100}px`);
+    leaf.style.animationDuration = `${7 + Math.random() * 6}s`;
+    leaf.style.animationDelay = `${Math.random() * 8}s`;
+    layer.appendChild(leaf);
+  }
+}
+
+function spawnRainDrops() {
+  const layer = document.getElementById("rainLayer");
+  if (!layer) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return;
+  for (let i = 0; i < 46; i++) {
+    const drop = document.createElement("div");
+    drop.className = "rain-drop";
+    drop.style.left = `${Math.random() * 100}%`;
+    drop.style.animationDuration = `${0.55 + Math.random() * 0.4}s`;
+    drop.style.animationDelay = `${Math.random() * 1.2}s`;
+    layer.appendChild(drop);
+  }
+}
+
 function flowerThumb(flower) {
   const wrap = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   wrap.setAttribute("viewBox", "0 0 120 120");
@@ -104,7 +141,9 @@ function renderFlowers() {
     btn.style.top = `${flower.plotY}%`;
     btn.style.setProperty("--sway-delay", `${(i % 5) * 0.6}s`);
     btn.style.setProperty("transform-origin", "bottom center");
-    btn.setAttribute("aria-label", `${flower.name}, planted by ${flower.author}`);
+    btn.dataset.name = flower.name;
+    btn.dataset.author = flower.author;
+    btn.setAttribute("aria-label", t("garden.flowerAria", { name: flower.name, author: flower.author }));
     btn.appendChild(flowerThumb(flower));
     btn.addEventListener("click", () => openDetail(flower));
     plantLayer.appendChild(btn);
@@ -115,11 +154,17 @@ function renderFlowers() {
 const overlay = document.getElementById("detailOverlay");
 const replaySvg = document.getElementById("replaySvg");
 let player = null;
+let currentFlower = null;
+
+function renderDetailMeta(flower) {
+  document.getElementById("detailMeta").textContent =
+    t("garden.plantedBy", { author: flower.author, date: formatDate(flower.createdAt, getLocale()) });
+}
 
 function openDetail(flower) {
+  currentFlower = flower;
   document.getElementById("detailName").textContent = flower.name;
-  document.getElementById("detailMeta").textContent =
-    `Planted by ${flower.author} · ${formatDate(flower.createdAt)}`;
+  renderDetailMeta(flower);
   document.getElementById("detailMessage").textContent = `"${flower.message}"`;
   player = createReplayPlayer(replaySvg, flower.strokes);
   overlay.classList.add("is-open");
@@ -142,9 +187,20 @@ document.getElementById("replaySpeed").addEventListener("change", (e) => {
   player?.setSpeed(parseFloat(e.target.value));
 });
 
+initI18n();
 paintScenery();
 spawnFireflies();
+spawnWindLeaves();
+spawnRainDrops();
 renderFlowers();
+initEnvironment(document.getElementById("gardenScene"));
+
+onLanguageChange(() => {
+  plantLayer.querySelectorAll(".garden-plot").forEach((btn) => {
+    btn.setAttribute("aria-label", t("garden.flowerAria", { name: btn.dataset.name, author: btn.dataset.author }));
+  });
+  if (currentFlower && overlay.classList.contains("is-open")) renderDetailMeta(currentFlower);
+});
 
 // If we just arrived from planting, open that flower's story automatically.
 if (justPlantedId) {

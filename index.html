@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Secret Garden — a little place for flowers, memories, and words</title>
-<meta name="description" content="A digital garden where you can draw a flower, leave a message, and plant it for others to find." />
+<title data-i18n="meta.titleHome">Secret Garden — a little place for flowers, memories, and words</title>
+<meta name="description" content="A digital garden where you can draw a flower, leave a message, and plant it for others to find." data-i18n-content="meta.description" />
 <link rel="stylesheet" href="css/tokens.css" />
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/landing.css" />
@@ -13,9 +13,10 @@
 
 <nav class="garden-nav" aria-label="Primary">
   <div class="garden-nav__links">
-    <a href="garden.html">Garden</a>
-    <a href="plant.html">Plant a Flower</a>
-    <a href="about.html">About</a>
+    <a href="garden.html" data-i18n="nav.garden">Garden</a>
+    <a href="plant.html" data-i18n="nav.plant">Plant a Flower</a>
+    <a href="about.html" data-i18n="nav.about">About</a>
+    <span class="garden-nav__lang" data-lang-switcher></span>
   </div>
 </nav>
 
@@ -45,24 +46,24 @@
       <path d="M24 42c-4-6-4-12 0-18 4 6 4 12 0 18Z" fill="#5b6f4e"/>
       <circle cx="24" cy="24" r="3" fill="#e3b94f"/>
     </svg>
-    <h1 class="hero__title">Welcome to the<br/>Secret Garden</h1>
-    <p class="hero__sub">A little place for flowers, memories, and words that deserve to grow.</p>
+    <h1 class="hero__title"><span data-i18n="landing.title1">Welcome to the</span><br/><span data-i18n="landing.title2">Secret Garden</span></h1>
+    <p class="hero__sub" data-i18n="landing.sub">A little place for flowers, memories, and words that deserve to grow.</p>
     <div class="hero__ctas">
-      <a class="btn btn--primary" href="garden.html">Enter the Garden</a>
-      <a class="btn btn--ghost" href="plant.html">Plant a Flower</a>
+      <a class="btn btn--primary" href="garden.html" data-i18n="landing.ctaEnter">Enter the Garden</a>
+      <a class="btn btn--ghost" href="plant.html" data-i18n="landing.ctaPlant">Plant a Flower</a>
     </div>
   </div>
 
   <div class="hero__scroll-hint">
-    <span>there is more, just below</span>
+    <span data-i18n="landing.scrollHint">there is more, just below</span>
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5l6 6 6-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </div>
 </section>
 
 <section class="intro">
   <div class="intro__inner">
-    <h2>Someone cared enough to plant something here.</h2>
-    <p>
+    <h2 data-i18n="landing.introTitle">Someone cared enough to plant something here.</h2>
+    <p data-i18n="landing.introBody">
       Every flower in this garden was drawn by hand, named, and left with a message
       for whoever finds it. You can wander the paths and read what others have left,
       or find a quiet plot of your own and grow something for someone you're thinking of.

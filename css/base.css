@@ -139,6 +139,40 @@ button {
   .garden-nav__links { gap: 0.55rem; }
 }
 
+/* --- Language switcher: shares the nav pill, set off by a hairline --- */
+.garden-nav__lang {
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--space-1);
+  padding-left: var(--space-3);
+  border-left: 1px solid rgba(240, 185, 62, 0.3);
+}
+
+.lang-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23e8dcc0' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 9px;
+  border: none;
+  color: #e8dcc0;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 0.2rem 0.95rem 0.2rem 0;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.lang-select:hover,
+.lang-select:focus-visible { color: var(--gold); }
+.lang-select option { color: var(--ink); background: var(--ivory); }
+
+@media (max-width: 640px) {
+  .garden-nav__lang { padding-left: var(--space-2); }
+  .lang-select { font-size: 0.78rem; }
+}
+
 /* --- Buttons: gacha-gold frame + a Howard-Le style light sweep on hover --- */
 .btn {
   position: relative;

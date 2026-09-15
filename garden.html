@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The Garden — Secret Garden</title>
+<title data-i18n="meta.titleGarden">The Garden — Secret Garden</title>
 <link rel="stylesheet" href="css/tokens.css" />
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/garden.css" />
@@ -12,9 +12,10 @@
 
 <nav class="garden-nav" aria-label="Primary">
   <div class="garden-nav__links">
-    <a href="garden.html" aria-current="page">Garden</a>
-    <a href="plant.html">Plant a Flower</a>
-    <a href="about.html">About</a>
+    <a href="garden.html" aria-current="page" data-i18n="nav.garden">Garden</a>
+    <a href="plant.html" data-i18n="nav.plant">Plant a Flower</a>
+    <a href="about.html" data-i18n="nav.about">About</a>
+    <span class="garden-nav__lang" data-lang-switcher></span>
   </div>
 </nav>
 
@@ -40,16 +41,22 @@
     <g id="mushrooms"></g>
   </svg>
 
-  <div class="garden-scene__layer garden-scene__plants" id="fireflyLayer"></div>
+  <div class="garden-scene__layer garden-scene__tint" id="nightTint" aria-hidden="true"></div>
+
+  <div class="garden-scene__layer garden-scene__plants" id="windLayer" aria-hidden="true"></div>
+
+  <div class="garden-scene__layer garden-scene__plants" id="fireflyLayer" aria-hidden="true"></div>
 
   <div class="garden-scene__layer garden-scene__plants" id="plantLayer" style="z-index:6;"></div>
 
-  <p class="garden-hint">Wander the garden. Tap a flower to read what someone left.</p>
+  <div class="garden-scene__layer garden-scene__rain" id="rainLayer" aria-hidden="true"></div>
+
+  <p class="garden-hint" data-i18n="garden.hint">Wander the garden. Tap a flower to read what someone left.</p>
 </main>
 
 <div class="detail-overlay" id="detailOverlay">
   <div class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
-    <button class="detail-panel__close" id="detailClose" aria-label="Close">×</button>
+    <button class="detail-panel__close" id="detailClose" aria-label="Close" data-i18n-aria-label="garden.close">×</button>
     <div class="detail-panel__canvas-wrap">
       <svg id="replaySvg" viewBox="0 0 120 120"></svg>
     </div>
@@ -57,13 +64,13 @@
     <p class="detail-panel__meta" id="detailMeta">—</p>
     <p class="detail-panel__message" id="detailMessage">—</p>
     <div class="detail-panel__controls">
-      <button class="icon-btn" id="replayPlay" aria-label="Play">▶</button>
-      <button class="icon-btn" id="replayPause" aria-label="Pause">❚❚</button>
-      <button class="icon-btn" id="replayAgain" aria-label="Replay from start">↺</button>
-      <select class="speed-select" id="replaySpeed" aria-label="Drawing speed">
-        <option value="0.5">Slow</option>
-        <option value="1" selected>Normal</option>
-        <option value="2">Fast</option>
+      <button class="icon-btn" id="replayPlay" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
+      <button class="icon-btn" id="replayPause" aria-label="Pause" data-i18n-aria-label="garden.replayPause">❚❚</button>
+      <button class="icon-btn" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
+      <select class="speed-select" id="replaySpeed" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
+        <option value="0.5" data-i18n="garden.speedSlow">Slow</option>
+        <option value="1" selected data-i18n="garden.speedNormal">Normal</option>
+        <option value="2" data-i18n="garden.speedFast">Fast</option>
       </select>
     </div>
   </div>

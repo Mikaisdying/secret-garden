@@ -7,6 +7,11 @@
   overflow: hidden;
   touch-action: pan-y; /* flowers are tapped, not dragged — allow normal scroll gestures */
   background: linear-gradient(180deg, #f3ecd4 0%, #e9dfba 60%, #d9cd9e 100%);
+  transition: background var(--dur-slow) var(--ease-soft);
+}
+
+.garden-scene.is-night {
+  background: linear-gradient(180deg, #141a33 0%, #1c2340 55%, #262b46 100%);
 }
 
 .garden-scene__layer {
@@ -20,6 +25,81 @@
 .garden-scene__mid   { z-index: 2; }
 .garden-scene__ground{ z-index: 3; }
 .garden-scene__plants{ z-index: 4; }
+
+/* --- Day/night tint: a soft wash over the painted scenery layers
+   only (fireflies and flowers sit above it and get their own
+   night treatment), faded in with the .is-night class. --- */
+.garden-scene__tint {
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(10, 14, 35, 0.38) 0%, rgba(18, 22, 46, 0.26) 55%, rgba(10, 14, 35, 0.12) 100%);
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-soft);
+}
+.garden-scene.is-night .garden-scene__tint { opacity: 1; }
+
+/* --- Wind: leaves drifting across on breezy (daytime) visits --- */
+.wind-leaf {
+  position: absolute;
+  width: 9px;
+  height: 6px;
+  border-radius: 60% 10% 60% 10%;
+  background: var(--sage);
+  opacity: 0;
+  pointer-events: none;
+  animation: wind-drift linear infinite;
+}
+@keyframes wind-drift {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+  8%   { opacity: 0.85; }
+  50%  { transform: translate(var(--wx, 60vw), var(--wy, 20px)) rotate(180deg); }
+  92%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translate(var(--wx2, 110vw), var(--wy2, -10px)) rotate(360deg); }
+}
+.garden-scene:not(.is-day) .wind-leaf { display: none; }
+
+.garden-scene.is-day #midTrees,
+.garden-scene.is-day #farTrees {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tree-breeze 4.5s ease-in-out infinite;
+}
+@keyframes tree-breeze {
+  0%, 100% { transform: rotate(-0.6deg); }
+  50% { transform: rotate(0.6deg); }
+}
+
+/* --- Rain: falls in front of everything, including the flowers --- */
+.garden-scene__rain {
+  z-index: 8;
+  pointer-events: none;
+}
+.garden-scene:not(.is-rainy) .garden-scene__rain { display: none; }
+
+.rain-drop {
+  position: absolute;
+  top: -8%;
+  width: 1.5px;
+  height: 46px;
+  background: linear-gradient(180deg, rgba(210, 228, 238, 0) 0%, rgba(210, 228, 238, 0.55) 60%, rgba(210, 228, 238, 0.75) 100%);
+  opacity: 0;
+  animation: rain-fall linear infinite;
+}
+@keyframes rain-fall {
+  0%   { opacity: 0; transform: translate(0, 0); }
+  6%   { opacity: 0.8; }
+  95%  { opacity: 0.55; }
+  100% { opacity: 0; transform: translate(-40px, 118vh); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wind-leaf { animation: none; opacity: 0.5; }
+  .garden-scene.is-day #midTrees,
+  .garden-scene.is-day #farTrees { animation: none; }
+  .rain-drop { animation: none; opacity: 0; }
+  .garden-scene__rain { display: none; }
+}
 
 .garden-plot {
   position: absolute;
@@ -41,12 +121,34 @@
 }
 
 @keyframes flower-sway {
-  0%, 100% { rotate: -2deg; }
-  50% { rotate: 2deg; }
+  0%, 100% { rotate: calc(-1 * var(--sway-amp, 2deg)); }
+  50% { rotate: var(--sway-amp, 2deg); }
 }
+
+/* Daytime: a livelier, wider sway to read as breeze. Only the amplitude
+   and duration change (via custom property + longhand), so the two-part
+   animation on a freshly-planted flower (grow-in, flower-sway) keeps both
+   parts instead of being collapsed to one by overriding animation-name. */
+.garden-scene.is-day .garden-plot {
+  --sway-amp: 5deg;
+  animation-duration: 3.2s;
+}
+
+/* Nighttime: dimmer petals lit by their own moonlit halo. */
+.garden-scene.is-night .garden-plot {
+  filter: brightness(0.82) drop-shadow(0 3px 4px rgba(0,0,0,0.35)) drop-shadow(0 0 12px rgba(255,224,138,0.85)) drop-shadow(0 0 26px rgba(255,224,138,0.5)) drop-shadow(0 0 40px rgba(125,211,224,0.35));
+}
+.garden-scene.is-night .garden-plot:hover,
+.garden-scene.is-night .garden-plot:focus-visible {
+  filter: brightness(0.95) drop-shadow(0 4px 10px rgba(0,0,0,0.4)) drop-shadow(0 0 16px rgba(255,224,138,1)) drop-shadow(0 0 32px rgba(255,224,138,0.6));
+}
+
+/* Fireflies only make sense once it's dark. */
+.garden-scene:not(.is-night) #fireflyLayer .firefly { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .garden-plot { animation: none; }
+  .garden-scene.is-day .garden-plot { animation: none; }
 }
 
 .garden-plot--new {

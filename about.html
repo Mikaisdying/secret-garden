@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>About — Secret Garden</title>
+<title data-i18n="meta.titleAbout">About — Secret Garden</title>
 <link rel="stylesheet" href="css/tokens.css" />
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/about.css" />
@@ -12,35 +12,37 @@
 
 <nav class="garden-nav" aria-label="Primary">
   <div class="garden-nav__links">
-    <a href="garden.html">Garden</a>
-    <a href="plant.html">Plant a Flower</a>
-    <a href="about.html" aria-current="page">About</a>
+    <a href="garden.html" data-i18n="nav.garden">Garden</a>
+    <a href="plant.html" data-i18n="nav.plant">Plant a Flower</a>
+    <a href="about.html" aria-current="page" data-i18n="nav.about">About</a>
+    <span class="garden-nav__lang" data-lang-switcher></span>
   </div>
 </nav>
 
 <main class="about-wrap">
-  <h1>A little place for flowers, memories, and words</h1>
-  <p>
+  <h1 data-i18n="about.title">A little place for flowers, memories, and words</h1>
+  <p data-i18n="about.p1">
     The Secret Garden began as a plain idea: that a message means more when
     someone takes the time to make something by hand before saying it. So
     instead of a comment box, there's a small patch of earth. You draw a
     flower — however simple — write a few honest words, and plant it
     somewhere in the garden for someone else to find.
   </p>
-  <p>
+  <p data-i18n="about.p2">
     Nothing here is ranked, liked, or sorted by popularity. There's no feed.
     You simply wander the paths, and every so often, you come across
     something someone left behind. If you'd like, you can watch it grow
     again — stroke by stroke, exactly as it was first drawn.
   </p>
-  <p>
+  <p data-i18n="about.p3">
     If you're building on top of this project: flowers are stored as vector
     stroke data rather than images, which is what makes the replay possible.
     See the README in this project for how to connect a real shared
     database so every visitor sees the same garden.
   </p>
-  <p class="signoff">Someone cared enough to plant something here. Maybe you're next.</p>
+  <p class="signoff" data-i18n="about.signoff">Someone cared enough to plant something here. Maybe you're next.</p>
 </main>
 
+<script type="module" src="js/i18n/boot.js"></script>
 </body>
 </html>

@@ -2,6 +2,8 @@
 // layers and floats a handful of fireflies. Kept deliberately gentle —
 // nothing here should distract from the headline.
 
+import { initI18n } from "./i18n/index.js";
+
 function seededRandom(seed) {
   let s = seed;
   return () => {
@@ -87,6 +89,7 @@ function spawnFireflies() {
   }
 }
 
+initI18n();
 paintTrees();
 paintGrass();
 spawnFireflies();
