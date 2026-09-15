@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent; /* no grey flash on tap, we show our own hover/active states */
+  overflow-x: hidden; /* the illustrated layers occasionally bleed a fraction past 100%; this keeps phones from gaining a horizontal scrollbar */
+}
+
+button, a.btn {
+  touch-action: manipulation; /* removes the ~300ms tap delay on older mobile browsers */
+}
+
+/* Anchors are reset to plain text by default; only .link (or a component
+   like .btn) opts back into an underline, so no <a> shows one unless
+   we explicitly ask for it. */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+/* --- Icon button: used by the replay controls (garden.html) and the
+   drawing toolbar (plant.html). Defined once here, shared by both,
+   instead of redefined per-page. --- */
+.icon-btn {
+  border: 1px solid var(--paper-shadow);
+  background: var(--ivory-deep);
+  border-radius: 999px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1;
+  touch-action: manipulation;
+  transition: background var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.icon-btn:hover { background: var(--gold); color: #3a2708; box-shadow: 0 0 12px var(--glow-gold); }
+.icon-btn.is-selected { background: var(--moss); color: var(--ivory); box-shadow: 0 0 12px var(--glow-teal); }
+
+/* faint paper grain, everywhere */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-grain);
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 var(--space-2);
+  letter-spacing: 0.01em;
+}
+
+p { margin: 0 0 var(--space-3); max-width: 62ch; }
+
+a { color: inherit; }
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --- Shared nav, appears on every page --- */
+.garden-nav {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  right: var(--space-3);
+  z-index: var(--z-nav);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  pointer-events: none;
+}
+
+.garden-nav__links {
+  display: flex;
+  gap: var(--space-3);
+  background: linear-gradient(180deg, rgba(46, 32, 21, 0.82), rgba(28, 20, 13, 0.88));
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--gold-deep);
+  box-shadow: inset 0 0 0 1px rgba(240, 185, 62, 0.25), 0 4px 16px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
+}
+
+.garden-nav__links a {
+  font-size: 0.92rem;
+  color: #e8dcc0;
+  padding: 0.2rem 0.3rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-fast) var(--ease-soft), color var(--dur-fast) var(--ease-soft), text-shadow var(--dur-fast) var(--ease-soft);
+}
+
+.garden-nav__links a:hover,
+.garden-nav__links a[aria-current="page"] {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  text-shadow: 0 0 8px var(--glow-gold);
+}
+
+@media (max-width: 640px) {
+  .garden-nav { top: var(--space-2); left: var(--space-2); right: var(--space-2); }
+  .garden-nav__links { gap: var(--space-2); padding: 0.5rem 0.7rem; }
+  .garden-nav__links a { font-size: 0.82rem; padding: 0.45rem 0.15rem; }
+}
+
+@media (max-width: 380px) {
+  .garden-nav__links { gap: 0.55rem; }
+}
+
+/* --- Buttons: gacha-gold frame + a Howard-Le style light sweep on hover --- */
+.btn {
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  border: 1px solid var(--gold-deep);
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 0.7rem 1.6rem;
+  border-radius: 3px 14px 3px 14px;
+  isolation: isolate;
+  transition: transform var(--dur-fast) var(--ease-soft), background var(--dur-fast) var(--ease-soft), color var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(169, 113, 31, 0.28); }
+
+/* the light sweep: a skewed gold band that travels across on hover */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.65s var(--ease-soft);
+}
+.btn:hover::before { transform: translateX(120%); }
+
+.btn--primary {
+  background: var(--gem-gradient);
+  border-color: var(--gold-deep);
+  color: #3a2708;
+  box-shadow: var(--shadow-glow);
+}
+.btn--primary:hover { box-shadow: 0 0 24px var(--glow-gold), 0 6px 16px rgba(0, 0, 0, 0.3); }
+
+.btn--ghost { color: var(--ink); }
+.btn--ghost:hover { background: rgba(240, 185, 62, 0.12); }
+
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn:disabled::before { display: none; }
+
+/* --- Firefly / particle layer, reused across pages --- */
+.firefly {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--firefly);
+  box-shadow: 0 0 6px 2px rgba(246, 214, 122, 0.8);
+  opacity: 0;
+  animation: firefly-drift linear infinite;
+}
+
+@keyframes firefly-drift {
+  0%   { opacity: 0; transform: translate(0, 0); }
+  10%  { opacity: 0.9; }
+  50%  { transform: translate(var(--fx, 30px), var(--fy, -40px)); }
+  90%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(var(--fx2, -20px), var(--fy2, -80px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .firefly { animation: none; opacity: 0.6; }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

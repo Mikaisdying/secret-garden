@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Garden — Secret Garden</title>
+<link rel="stylesheet" href="css/tokens.css" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/garden.css" />
+</head>
+<body>
+
+<nav class="garden-nav" aria-label="Primary">
+  <div class="garden-nav__links">
+    <a href="garden.html" aria-current="page">Garden</a>
+    <a href="plant.html">Plant a Flower</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<main class="garden-scene" id="gardenScene">
+  <svg class="garden-scene__layer garden-scene__far" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path d="M0,420 C260,340 500,460 760,390 C1020,320 1240,430 1440,370 L1440,900 L0,900 Z" fill="#c8d8ac" opacity="0.7"/>
+    <g id="farTrees" fill="#8ea56e" opacity="0.55"></g>
+  </svg>
+
+  <svg class="garden-scene__layer garden-scene__mid" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path d="M0,520 C300,460 560,560 820,500 C1080,440 1260,540 1440,480 L1440,900 L0,900 Z" fill="#a9c08a"/>
+    <g id="midTrees" fill="#6f8a53"></g>
+    <!-- a small winding path -->
+    <path d="M120,900 C220,760 260,700 420,660 C580,620 640,560 620,480" stroke="#e4d9b4" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.55"/>
+    <!-- pond -->
+    <ellipse cx="1180" cy="760" rx="150" ry="46" fill="#9fc1d0" opacity="0.55"/>
+    <ellipse cx="1180" cy="760" rx="150" ry="46" fill="none" stroke="#7fa7b8" stroke-width="2" opacity="0.4"/>
+  </svg>
+
+  <svg class="garden-scene__layer garden-scene__ground" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path d="M0,620 C300,560 620,660 900,600 C1160,545 1300,620 1440,580 L1440,900 L0,900 Z" fill="#93a86e"/>
+    <g id="grassTufts"></g>
+    <g id="mushrooms"></g>
+  </svg>
+
+  <div class="garden-scene__layer garden-scene__plants" id="fireflyLayer"></div>
+
+  <div class="garden-scene__layer garden-scene__plants" id="plantLayer" style="z-index:6;"></div>
+
+  <p class="garden-hint">Wander the garden. Tap a flower to read what someone left.</p>
+</main>
+
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
+    <button class="detail-panel__close" id="detailClose" aria-label="Close">×</button>
+    <div class="detail-panel__canvas-wrap">
+      <svg id="replaySvg" viewBox="0 0 120 120"></svg>
+    </div>
+    <h2 class="detail-panel__name" id="detailName">—</h2>
+    <p class="detail-panel__meta" id="detailMeta">—</p>
+    <p class="detail-panel__message" id="detailMessage">—</p>
+    <div class="detail-panel__controls">
+      <button class="icon-btn" id="replayPlay" aria-label="Play">▶</button>
+      <button class="icon-btn" id="replayPause" aria-label="Pause">❚❚</button>
+      <button class="icon-btn" id="replayAgain" aria-label="Replay from start">↺</button>
+      <select class="speed-select" id="replaySpeed" aria-label="Drawing speed">
+        <option value="0.5">Slow</option>
+        <option value="1" selected>Normal</option>
+        <option value="2">Fast</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/garden.js"></script>
+</body>
+</html>

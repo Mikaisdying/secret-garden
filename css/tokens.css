@@ -1,0 +1,87 @@
+/* ===========================================================
+   Secret Garden — Design Tokens
+   Botanical soul, gacha-game-UI chrome: Howard Le's anime/game
+   panel-and-glow treatment leads, with a Genshin-style gold
+   filigree frame and Cat Restaurant's soft rounded pastel warmth
+   as supporting accents.
+   =========================================================== */
+
+:root {
+  /* --- Color: warm parchment content, jewel-toned chrome --- */
+  --ivory:        #fbf1da;   /* primary background, warm parchment */
+  --ivory-deep:    #f2e4bd;  /* secondary panels */
+  --paper-shadow: #d9bf85;   /* soft borders / recessed paper edges, gold-tinted */
+  --sage:         #7fae86;   /* jewel-leaning sage green */
+  --moss:         #3c7a5c;   /* deep emerald, Howard-Le/Genshin jewel green */
+  --dusty-pink:   #f2a4c0;   /* Cat Restaurant pastel pink */
+  --lavender:     #b79ee6;   /* saturated magic-purple accent */
+  --gold:         #f0b93e;   /* gacha gold */
+  --gold-deep:    #a9711f;   /* gold border / engraving shadow */
+  --sky:          #7dd3e0;   /* cyan-teal "mana" glow accent */
+  --ink:          #2e2015;   /* warm near-black, primary text */
+  --ink-soft:     #6b5636;   /* secondary text */
+  --firefly:      #ffe08a;
+
+  /* --- Glow & metal: the Howard-Le/gacha signature --- */
+  --glow-gold: rgba(240, 185, 62, 0.55);
+  --glow-teal: rgba(125, 211, 224, 0.5);
+  --gem-gradient: linear-gradient(135deg, #fbe7a1 0%, #f0b93e 45%, #a9711f 100%);
+  --shadow-glow: 0 0 18px var(--glow-gold), 0 4px 14px rgba(0, 0, 0, 0.25);
+
+  /* --- Gem-frame corner ornaments ---
+     Same motif (gold bracket + vine curl + diamond gem), reused at
+     all four corners of a panel via multi-background, mirrored with
+     an inner <g transform> rather than four separate drawings. */
+  --frame-tl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M6 30 L6 10 Q6 6 10 6 L30 6' fill='none' stroke='%23a9711f' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M6 20 Q14 20 16 8' fill='none' stroke='%23a9711f' stroke-width='1.2' opacity='0.55' stroke-linecap='round'/%3E%3Cg transform='translate(12,12) rotate(45)'%3E%3Crect x='-4' y='-4' width='8' height='8' fill='%23f0b93e' stroke='%23a9711f' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+  --frame-tr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='translate(40,0) scale(-1,1)'%3E%3Cpath d='M6 30 L6 10 Q6 6 10 6 L30 6' fill='none' stroke='%23a9711f' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M6 20 Q14 20 16 8' fill='none' stroke='%23a9711f' stroke-width='1.2' opacity='0.55' stroke-linecap='round'/%3E%3Cg transform='translate(12,12) rotate(45)'%3E%3Crect x='-4' y='-4' width='8' height='8' fill='%23f0b93e' stroke='%23a9711f' stroke-width='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --frame-bl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='translate(0,40) scale(1,-1)'%3E%3Cpath d='M6 30 L6 10 Q6 6 10 6 L30 6' fill='none' stroke='%23a9711f' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M6 20 Q14 20 16 8' fill='none' stroke='%23a9711f' stroke-width='1.2' opacity='0.55' stroke-linecap='round'/%3E%3Cg transform='translate(12,12) rotate(45)'%3E%3Crect x='-4' y='-4' width='8' height='8' fill='%23f0b93e' stroke='%23a9711f' stroke-width='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --frame-br: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='translate(40,40) scale(-1,-1)'%3E%3Cpath d='M6 30 L6 10 Q6 6 10 6 L30 6' fill='none' stroke='%23a9711f' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M6 20 Q14 20 16 8' fill='none' stroke='%23a9711f' stroke-width='1.2' opacity='0.55' stroke-linecap='round'/%3E%3Cg transform='translate(12,12) rotate(45)'%3E%3Crect x='-4' y='-4' width='8' height='8' fill='%23f0b93e' stroke='%23a9711f' stroke-width='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+
+  /* --- Type --- */
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-body:    "Lora", "Iowan Old Style", Georgia, serif;
+
+  --step-display-xl: clamp(2.6rem, 5vw + 1rem, 4.6rem);
+  --step-display-l:  clamp(2rem, 3vw + 1rem, 3.1rem);
+  --step-display-m:  clamp(1.5rem, 2vw + 0.6rem, 2.1rem);
+  --step-body:       1.05rem;
+  --step-small:      0.9rem;
+
+  /* --- Spacing rhythm --- */
+  --space-1: 0.4rem;
+  --space-2: 0.8rem;
+  --space-3: 1.4rem;
+  --space-4: 2.2rem;
+  --space-5: 3.6rem;
+  --space-6: 5.8rem;
+
+  /* --- Motion --- */
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-slow: 900ms;
+  --dur-med: 420ms;
+  --dur-fast: 200ms;
+
+  --radius-organic: 63% 37% 54% 46% / 42% 47% 53% 58%;
+  --shadow-paper: 0 2px 10px rgba(74, 56, 38, 0.12);
+
+  /* --- Z-index scale ---
+     One place to reason about stacking order instead of guessing
+     numbers per-component. Scene-internal layers (garden background,
+     drawing canvas) stack locally with small numbers (1–6) and don't
+     need a token; only things that stack ON TOP OF a whole page do. */
+  --z-nav: 100;
+  --z-overlay: 200;
+  --z-overlay-panel: 201;
+  --z-modal: 300;
+  --z-grain: 999;
+}
+
+/* --- Breakpoint convention ---
+   640px = phones / narrow tablets in portrait
+   380px = small phones (SE-class widths)
+   Used as literal values in each stylesheet (no build step / Sass here),
+   but always these two numbers — never a one-off third value. */
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-slow: 1ms; --dur-med: 1ms; --dur-fast: 1ms; }
+}

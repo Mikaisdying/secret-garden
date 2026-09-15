@@ -1,0 +1,8 @@
+.about-wrap {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: calc(var(--space-6) + var(--space-2)) var(--space-3) var(--space-6);
+}
+.about-wrap h1 { font-size: var(--step-display-l); font-style: italic; margin-bottom: var(--space-4); text-shadow: 0 0 20px var(--glow-gold); }
+.about-wrap p { color: var(--ink-soft); }
+.about-wrap .signoff { font-family: var(--font-display); font-style: italic; color: var(--moss); margin-top: var(--space-5); }

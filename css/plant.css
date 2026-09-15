@@ -1,0 +1,195 @@
+.plant-wrap {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: calc(var(--space-6) + var(--space-2)) var(--space-3) var(--space-5);
+  display: flex;
+  justify-content: center;
+  background: radial-gradient(ellipse at top, #f8f2df 0%, var(--ivory) 60%);
+}
+
+.plant-card {
+  width: 100%;
+  max-width: 640px;
+}
+
+.plant-steps {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.plant-steps__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--paper-shadow);
+  transition: background var(--dur-fast) var(--ease-soft), transform var(--dur-fast) var(--ease-soft);
+}
+.plant-steps__dot.is-active { background: var(--gold); transform: scale(1.3); box-shadow: 0 0 8px var(--glow-gold); }
+.plant-steps__dot.is-done { background: var(--sage); }
+
+.plant-step { display: none; animation: step-in var(--dur-med) var(--ease-soft) both; }
+.plant-step.is-active { display: block; }
+@keyframes step-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.plant-step h2 {
+  font-size: var(--step-display-l);
+  font-style: italic;
+  margin-bottom: var(--space-1);
+}
+.plant-step__hint { color: var(--ink-soft); margin-bottom: var(--space-4); }
+
+/* Step 1: pick a plot */
+.plot-picker {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #eadfb9 0%, #d7c98f 100%);
+  border: 1px solid var(--paper-shadow);
+  cursor: crosshair;
+  touch-action: none; /* a tap places a marker — don't let the page scroll/zoom under the finger */
+  margin-bottom: var(--space-4);
+}
+.plot-picker svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.plot-marker {
+  position: absolute;
+  width: 22px; height: 22px;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+.plot-picker__existing {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(91, 111, 78, 0.35);
+  transform: translate(-50%, -50%);
+}
+
+/* Step 2: drawing */
+.draw-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+  padding: var(--space-2);
+  background: var(--ivory-deep);
+  border-radius: 14px;
+  border: 1px solid var(--paper-shadow);
+}
+.swatch {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.swatch.is-selected { border-color: var(--gold-deep); box-shadow: 0 0 0 2px var(--gold), 0 0 8px var(--glow-gold); }
+.brush-range { width: 90px; accent-color: var(--moss); touch-action: manipulation; }
+.toolbar-sep { width: 1px; height: 24px; background: var(--paper-shadow); margin: 0 var(--space-1); }
+
+/* .icon-btn (erase/undo/redo/clear) is defined once in base.css and shared
+   with garden.html's replay controls — not redefined here. */
+
+.draw-canvas-wrap {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #fffdf6;
+  border: 1px solid var(--paper-shadow);
+  border-radius: 16px;
+  margin-bottom: var(--space-4);
+  box-shadow: inset 0 0 0 8px var(--ivory);
+  touch-action: none;
+}
+.draw-canvas-wrap svg { width: 100%; height: 100%; display: block; border-radius: 10px; }
+
+/* Step 3/4: name + message */
+.field { margin-bottom: var(--space-4); }
+.field label {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+.field input[type="text"],
+.field textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--paper-shadow);
+  border-radius: 10px;
+  background: #fffdf6;
+  color: var(--ink);
+  resize: vertical;
+}
+.field textarea { min-height: 110px; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(147,166,126,0.25); }
+.field__count { text-align: right; font-size: var(--step-small); color: var(--ink-soft); margin-top: 0.3rem; }
+
+/* Step 5: preview */
+.preview-card {
+  border: 1px solid var(--gold-deep);
+  background-color: var(--ivory-deep);
+  background-image: var(--frame-tl), var(--frame-tr), var(--frame-bl), var(--frame-br);
+  background-repeat: no-repeat;
+  background-position: top 4px left 4px, top 4px right 4px, bottom 4px left 4px, bottom 4px right 4px;
+  background-size: 34px 34px;
+  border-radius: 16px;
+  padding: var(--space-4);
+  text-align: center;
+  margin-bottom: var(--space-4);
+  box-shadow: 0 0 22px var(--glow-gold);
+}
+.preview-card svg { width: 140px; height: 140px; }
+.preview-card h3 { font-size: var(--step-display-m); font-style: italic; margin-top: var(--space-2); }
+.preview-card__by { color: var(--ink-soft); font-size: var(--step-small); margin-bottom: var(--space-2); }
+.preview-card__msg { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; }
+
+.plant-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Growth confirmation, shown briefly before redirecting to the garden */
+.grow-confirm {
+  position: fixed;
+  inset: 0;
+  background: var(--ivory);
+  display: grid;
+  place-items: center;
+  z-index: var(--z-modal);
+  text-align: center;
+  padding: var(--space-3);
+}
+.grow-confirm[hidden] { display: none; }
+.grow-confirm svg { width: 120px; height: 120px; animation: pop-grow 1.2s var(--ease-soft) both; }
+@keyframes pop-grow {
+  0% { transform: scale(0.2) translateY(20px); opacity: 0; }
+  70% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.grow-confirm h2 { font-size: var(--step-display-l); font-style: italic; margin-top: var(--space-3); }
+
+@media (max-width: 640px) {
+  .plant-wrap { padding: calc(var(--space-5) + var(--space-1)) var(--space-2) var(--space-4); }
+
+  /* bigger, easier-to-hit touch targets for the drawing tools */
+  .draw-toolbar { gap: var(--space-3); padding: var(--space-2) var(--space-2); }
+  .swatch { width: 32px; height: 32px; }
+  .brush-range { width: 100px; }
+
+  /* form fields at 16px+ so iOS Safari doesn't zoom in on focus */
+  .field input[type="text"],
+  .field textarea { font-size: 16px; padding: 0.8rem 0.9rem; }
+
+  /* step footer: stack instead of squeezing long labels side by side */
+  .plant-nav { flex-wrap: wrap; }
+  .plant-nav .btn { flex: 1 1 auto; text-align: center; }
+
+  .preview-card svg { width: 110px; height: 110px; }
+}
