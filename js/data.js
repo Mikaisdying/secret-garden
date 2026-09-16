@@ -15,7 +15,7 @@ const STORAGE_KEY = "secret-garden.flowers.v1";
  * @typedef {{
  *   id:string, name:string, author:string, message:string,
  *   createdAt:string, plotX:number, plotY:number, scale:number, hue:number,
- *   strokes:Stroke[]
+ *   strokes:Stroke[], isPrivate:boolean, seal:(string|null)
  * }} Flower
  */
 
@@ -82,6 +82,7 @@ function seedFlowers() {
       createdAt: "2024-03-02T20:10:00.000Z",
       plotX: 22, plotY: 62, scale: 1, hue: 0,
       strokes: petals(60, 60, "#e9e2f3"),
+      isPrivate: false, seal: null,
     },
     {
       id: "seed-2", name: "Wren's Wish", author: "Wren",
@@ -89,6 +90,7 @@ function seedFlowers() {
       createdAt: "2024-04-11T14:32:00.000Z",
       plotX: 68, plotY: 70, scale: 1.1, hue: 0,
       strokes: petals(60, 60, "#d8a3a0"),
+      isPrivate: false, seal: null,
     },
     {
       id: "seed-3", name: "Small Gold Thing", author: "Theo",
@@ -96,6 +98,7 @@ function seedFlowers() {
       createdAt: "2024-05-29T09:00:00.000Z",
       plotX: 45, plotY: 48, scale: 0.9, hue: 0,
       strokes: petals(60, 60, "#e3b94f"),
+      isPrivate: false, seal: null,
     },
     {
       id: "seed-4", name: "Late Bloomer", author: "Ana",
@@ -103,6 +106,15 @@ function seedFlowers() {
       createdAt: "2024-06-14T18:45:00.000Z",
       plotX: 81, plotY: 40, scale: 1, hue: 0,
       strokes: petals(60, 60, "#9fc1d0"),
+      isPrivate: false, seal: null,
+    },
+    {
+      id: "seed-5", name: "Whispered Thing", author: "Mika",
+      message: "This one isn't for everyone. If you're reading it, you probably know why.",
+      createdAt: "2024-07-20T21:15:00.000Z",
+      plotX: 34, plotY: 34, scale: 1, hue: 0,
+      strokes: petals(60, 60, "#c2aed1"),
+      isPrivate: true, seal: "lavender",
     },
   ];
 }

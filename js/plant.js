@@ -1,6 +1,7 @@
 import { addFlower, getFlowers } from "./data.js";
 import { createDrawingCanvas, buildStrokePath } from "./draw.js";
 import { initI18n, t, onLanguageChange } from "./i18n/index.js";
+import { SEALS, sealSvgMarkup } from "./seals.js";
 
 initI18n();
 
@@ -11,6 +12,8 @@ const state = {
   name: "",
   author: "",
   message: "",
+  isPrivate: false,
+  seal: SEALS[0].id,
 };
 
 const steps = Array.from(document.querySelectorAll(".plant-step"));
@@ -177,6 +180,42 @@ toStep5.addEventListener("click", () => {
   goTo(5);
 });
 
+// ---- Step 4b: private letter + wax seal ----
+const isPrivateToggle = document.getElementById("isPrivateToggle");
+const sealPicker = document.getElementById("sealPicker");
+
+function renderSealOption(btn, seal) {
+  btn.innerHTML = sealSvgMarkup(seal.id);
+  btn.setAttribute("aria-label", t(seal.labelKey));
+}
+
+SEALS.forEach((seal, i) => {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "seal-option" + (seal.id === state.seal ? " is-selected" : "");
+  btn.dataset.seal = seal.id;
+  renderSealOption(btn, seal);
+  btn.addEventListener("click", () => {
+    sealPicker.querySelectorAll(".seal-option").forEach((b) => b.classList.remove("is-selected"));
+    btn.classList.add("is-selected");
+    state.seal = seal.id;
+    if (state.step === 5) buildPreview();
+  });
+  sealPicker.appendChild(btn);
+});
+
+isPrivateToggle.addEventListener("change", () => {
+  state.isPrivate = isPrivateToggle.checked;
+  sealPicker.hidden = !state.isPrivate;
+});
+
+onLanguageChange(() => {
+  sealPicker.querySelectorAll(".seal-option").forEach((btn) => {
+    const seal = SEALS.find((s) => s.id === btn.dataset.seal);
+    if (seal) btn.setAttribute("aria-label", t(seal.labelKey));
+  });
+});
+
 // ---- Step 5: preview + plant ----
 function drawInto(svgEl, strokes) {
   svgEl.innerHTML = "";
@@ -188,6 +227,11 @@ function buildPreview() {
   document.getElementById("previewName").textContent = state.name;
   document.getElementById("previewBy").textContent = t("plant.previewBy", { author: state.author });
   document.getElementById("previewMsg").textContent = `"${state.message}"`;
+  const privateNote = document.getElementById("previewPrivateNote");
+  privateNote.hidden = !state.isPrivate;
+  if (state.isPrivate) {
+    document.getElementById("previewPrivateSeal").innerHTML = sealSvgMarkup(state.seal);
+  }
 }
 
 onLanguageChange(() => {
@@ -206,6 +250,8 @@ document.getElementById("plantBtn").addEventListener("click", () => {
     scale: 0.9 + Math.random() * 0.3,
     hue: 0,
     strokes: canvas.getStrokes(),
+    isPrivate: state.isPrivate,
+    seal: state.isPrivate ? state.seal : null,
   });
 
   const confirm = document.getElementById("growConfirm");

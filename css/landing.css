@@ -81,26 +81,8 @@
   flex-wrap: wrap;
 }
 
-.hero__scroll-hint {
-  position: absolute;
-  bottom: var(--space-3);
-  right: var(--space-4);
-  z-index: 5;
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--ink-soft);
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.hero__scroll-hint svg { animation: bob 2.4s ease-in-out infinite; }
-@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
-
 @media (max-width: 640px) {
   .hero__content { padding: var(--space-5) var(--space-3) var(--space-5); }
-  .hero__scroll-hint { display: none; }
   .hero__sun { width: 140px; height: 140px; }
   .hero__sub { max-width: 32ch; }
 }
@@ -109,39 +91,3 @@
   .hero__ctas { flex-direction: column; align-items: stretch; }
   .hero__ctas .btn { text-align: center; }
 }
-
-/* --- Intro strip below the fold: small explanation, storybook page feel --- */
-.intro {
-  background: var(--ivory);
-  padding: var(--space-6) var(--space-4);
-  display: grid;
-  place-items: center;
-  text-align: left;
-}
-
-.intro__inner {
-  max-width: 640px;
-  position: relative;
-  border-top: 1px solid var(--gold-deep);
-  padding-top: var(--space-4);
-}
-.intro__inner::before {
-  content: "";
-  position: absolute;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  width: 8px;
-  height: 8px;
-  background: var(--gold);
-  border: 1px solid var(--gold-deep);
-  box-shadow: 0 0 8px var(--glow-gold);
-}
-
-.intro__inner h2 {
-  font-size: var(--step-display-m);
-  font-style: italic;
-  color: var(--moss);
-}
-
-.intro__inner p { color: var(--ink-soft); }

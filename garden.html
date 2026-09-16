@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title data-i18n="meta.titleGarden">The Garden — Secret Garden</title>
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
 <link rel="stylesheet" href="css/tokens.css" />
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/garden.css" />
@@ -18,6 +19,33 @@
     <span class="garden-nav__lang" data-lang-switcher></span>
   </div>
 </nav>
+
+<a class="shovel-fab" href="plant.html" aria-label="Plant a Flower" data-i18n-aria-label="landing.ctaPlant" title="Plant a Flower" data-i18n-title="landing.ctaPlant">
+  <svg viewBox="0 0 200 400" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="shovelWood" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#f1d9ae"/>
+        <stop offset="55%" stop-color="#dab97e"/>
+        <stop offset="100%" stop-color="#b98f52"/>
+      </linearGradient>
+      <linearGradient id="shovelBlade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#eef1f5"/>
+        <stop offset="50%" stop-color="#c7cbd3"/>
+        <stop offset="100%" stop-color="#8c9099"/>
+      </linearGradient>
+    </defs>
+    <g transform="rotate(16 100 200)">
+      <path d="M72 10c0-9 12-9 28-9s28 0 28 9-12 9-28 9-28 0-28-9Z" fill="#1c1c1c"/>
+      <rect x="76" y="4" width="48" height="7" rx="3.5" fill="#000" opacity="0.35"/>
+      <path d="M76 18c-6 3-8 10-8 20l10 6c1-10 2-18 6-23Z" fill="#1c1c1c"/>
+      <path d="M124 18c6 3 8 10 8 20l-10 6c-1-10-2-18-6-23Z" fill="#1c1c1c"/>
+      <rect x="93" y="40" width="14" height="215" rx="6" fill="url(#shovelWood)" stroke="#8f6a37" stroke-width="1"/>
+      <rect x="88" y="250" width="24" height="20" rx="3" fill="#4b4e56" stroke="#2c2e33" stroke-width="1.5"/>
+      <path d="M62 268c0-6 17-9 38-9s38 3 38 9l-6 20c-5 15-14 27-22 40-3 5-9 5-12 0-8-13-17-25-22-40Z" fill="url(#shovelBlade)" stroke="#5b5e66" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M78 272c3 20 9 40 22 56" stroke="#fff" stroke-width="2" opacity="0.35" stroke-linecap="round"/>
+    </g>
+  </svg>
+</a>
 
 <main class="garden-scene" id="gardenScene">
   <svg class="garden-scene__layer garden-scene__far" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
@@ -50,8 +78,6 @@
   <div class="garden-scene__layer garden-scene__plants" id="plantLayer" style="z-index:6;"></div>
 
   <div class="garden-scene__layer garden-scene__rain" id="rainLayer" aria-hidden="true"></div>
-
-  <p class="garden-hint" data-i18n="garden.hint">Wander the garden. Tap a flower to read what someone left.</p>
 </main>
 
 <div class="detail-overlay" id="detailOverlay">
@@ -62,7 +88,13 @@
     </div>
     <h2 class="detail-panel__name" id="detailName">—</h2>
     <p class="detail-panel__meta" id="detailMeta">—</p>
-    <p class="detail-panel__message" id="detailMessage">—</p>
+    <div class="detail-panel__letter" id="detailLetter">
+      <p class="detail-panel__message" id="detailMessage">—</p>
+      <div class="detail-panel__seal" id="detailSeal" hidden>
+        <div class="detail-panel__seal-mount" id="detailSealMount"></div>
+        <p class="detail-panel__sealed-note" id="detailSealedNote" data-i18n="garden.sealedNotice">This letter is sealed. Only the one it's meant for can open it.</p>
+      </div>
+    </div>
     <div class="detail-panel__controls">
       <button class="icon-btn" id="replayPlay" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
       <button class="icon-btn" id="replayPause" aria-label="Pause" data-i18n-aria-label="garden.replayPause">❚❚</button>

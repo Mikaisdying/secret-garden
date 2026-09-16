@@ -49,6 +49,59 @@ export function buildStrokePath(stroke) {
   return path;
 }
 
+let maskIdSeq = 0;
+
+/**
+ * Renders a list of strokes into a single <g>, with "erase" strokes cut as
+ * real transparent holes (via nested SVG masks) instead of painted-over
+ * patches — so erased areas show whatever sits behind the drawing (paper,
+ * a garden thumbnail, a preview card) rather than a flat matte color.
+ *
+ * Each erase stroke wraps everything drawn before it in a mask, so it only
+ * ever erases ink that came earlier — ink drawn afterward, on top, is safe.
+ */
+export function buildStrokesGroup(strokes) {
+  const NS = "http://www.w3.org/2000/svg";
+  let acc = document.createElementNS(NS, "g");
+
+  strokes.forEach((s) => {
+    if (s.erase) {
+      const maskId = `erase-mask-${maskIdSeq++}`;
+      const mask = document.createElementNS(NS, "mask");
+      mask.setAttribute("id", maskId);
+      mask.setAttribute("maskUnits", "userSpaceOnUse");
+      mask.setAttribute("x", "-100000");
+      mask.setAttribute("y", "-100000");
+      mask.setAttribute("width", "200000");
+      mask.setAttribute("height", "200000");
+
+      const bg = document.createElementNS(NS, "rect");
+      bg.setAttribute("x", "-100000");
+      bg.setAttribute("y", "-100000");
+      bg.setAttribute("width", "200000");
+      bg.setAttribute("height", "200000");
+      bg.setAttribute("fill", "white");
+      mask.appendChild(bg);
+
+      const hole = document.createElementNS(NS, "path");
+      hole.setAttribute("d", freehandPathFromPoints(s.points, s.size));
+      hole.setAttribute("fill", "black");
+      mask.appendChild(hole);
+
+      acc.appendChild(mask);
+      acc.setAttribute("mask", `url(#${maskId})`);
+
+      const outer = document.createElementNS(NS, "g");
+      outer.appendChild(acc);
+      acc = outer;
+    } else {
+      acc.appendChild(buildStrokePath(s));
+    }
+  });
+
+  return acc;
+}
+
 /**
  * Attaches a freehand drawing surface to an <svg> element.
  * Returns an API to read/undo/redo/clear/replay strokes.
@@ -66,8 +119,15 @@ export function createDrawingCanvas(svgEl, options = {}) {
 
   function toLocalPoint(evt) {
     const rect = svgEl.getBoundingClientRect();
-    const x = ((evt.clientX - rect.left) / rect.width) * viewBox.width;
-    const y = ((evt.clientY - rect.top) / rect.height) * viewBox.height;
+    // The SVG's default preserveAspectRatio ("xMidYMid meet") uniformly
+    // scales and centers the viewBox inside rect, letterboxing it when
+    // rect's aspect ratio doesn't match the viewBox's. Account for that
+    // offset/scale here so pointer coordinates land where they're drawn.
+    const scale = Math.min(rect.width / viewBox.width, rect.height / viewBox.height);
+    const offsetX = (rect.width - viewBox.width * scale) / 2;
+    const offsetY = (rect.height - viewBox.height * scale) / 2;
+    const x = (evt.clientX - rect.left - offsetX) / scale;
+    const y = (evt.clientY - rect.top - offsetY) / scale;
     return { x, y, pressure: evt.pressure || 0.5 };
   }
 
@@ -116,12 +176,10 @@ export function createDrawingCanvas(svgEl, options = {}) {
   svgEl.addEventListener("pointerleave", () => { if (activeStroke) pointerUp(); });
 
   function redraw() {
-    svgEl.querySelectorAll("path[data-stroke]").forEach((p) => p.remove());
-    strokes.forEach((s) => {
-      const path = buildStrokePath(s);
-      path.setAttribute("data-stroke", "1");
-      svgEl.appendChild(path);
-    });
+    svgEl.querySelectorAll("[data-strokes-group]").forEach((g) => g.remove());
+    const group = buildStrokesGroup(strokes);
+    group.setAttribute("data-strokes-group", "1");
+    svgEl.appendChild(group);
   }
 
   return {

@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title data-i18n="meta.titlePlant">Plant a Flower — Secret Garden</title>
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
 <link rel="stylesheet" href="css/tokens.css" />
 <link rel="stylesheet" href="css/base.css" />
 <link rel="stylesheet" href="css/plant.css" />
@@ -133,6 +134,14 @@
         <textarea id="flowerMessage" maxlength="220" placeholder="Even on the quietest nights, I hope you find something worth looking at." data-i18n-placeholder="plant.messagePlaceholder"></textarea>
         <div class="field__count"><span id="msgCount">0</span>/220</div>
       </div>
+      <div class="field">
+        <label class="checkbox-row" for="isPrivateToggle">
+          <input type="checkbox" id="isPrivateToggle" />
+          <span data-i18n="plant.privateLabel">Make this a private letter</span>
+        </label>
+        <p class="plant-step__hint" data-i18n="plant.privateHint">A sealed letter still grows in the garden for everyone to see, but only its intended reader can open the message inside.</p>
+        <div class="seal-picker" id="sealPicker" hidden></div>
+      </div>
       <div class="plant-nav">
         <button class="btn btn--ghost" id="backTo3" data-i18n="plant.back">Back</button>
         <button class="btn btn--primary" id="toStep5" disabled data-i18n="plant.step4Next">Next: preview</button>
@@ -148,6 +157,10 @@
         <h3 id="previewName">—</h3>
         <p class="preview-card__by" id="previewBy">—</p>
         <p class="preview-card__msg" id="previewMsg">—</p>
+        <div class="preview-card__private" id="previewPrivateNote" hidden>
+          <span class="preview-card__private-seal" id="previewPrivateSeal" aria-hidden="true"></span>
+          <span data-i18n="plant.previewSealed">This letter will stay sealed for everyone but the one it's meant for.</span>
+        </div>
       </div>
       <div class="plant-nav">
         <button class="btn btn--ghost" id="backTo4" data-i18n="plant.back">Back</button>

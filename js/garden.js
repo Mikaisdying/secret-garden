@@ -2,6 +2,8 @@ import { getFlowers, formatDate } from "./data.js";
 import { buildStrokePath, createReplayPlayer } from "./draw.js";
 import { initI18n, t, getLocale, onLanguageChange } from "./i18n/index.js";
 import { initEnvironment } from "./environment.js";
+import { sealSvgMarkup } from "./seals.js";
+import { canOpenPrivateLetters } from "./access.js";
 
 const plantLayer = document.getElementById("plantLayer");
 const params = new URLSearchParams(location.search);
@@ -131,6 +133,11 @@ function flowerThumb(flower) {
   return wrap;
 }
 
+function flowerAriaLabel(flower) {
+  const key = flower.isPrivate ? "garden.flowerAriaSealed" : "garden.flowerAria";
+  return t(key, { name: flower.name, author: flower.author });
+}
+
 function renderFlowers() {
   const flowers = getFlowers();
   flowers.forEach((flower, i) => {
@@ -143,7 +150,8 @@ function renderFlowers() {
     btn.style.setProperty("transform-origin", "bottom center");
     btn.dataset.name = flower.name;
     btn.dataset.author = flower.author;
-    btn.setAttribute("aria-label", t("garden.flowerAria", { name: flower.name, author: flower.author }));
+    btn.dataset.private = flower.isPrivate ? "1" : "";
+    btn.setAttribute("aria-label", flowerAriaLabel(flower));
     btn.appendChild(flowerThumb(flower));
     btn.addEventListener("click", () => openDetail(flower));
     plantLayer.appendChild(btn);
@@ -161,11 +169,29 @@ function renderDetailMeta(flower) {
     t("garden.plantedBy", { author: flower.author, date: formatDate(flower.createdAt, getLocale()) });
 }
 
+function renderLetter(flower) {
+  const locked = flower.isPrivate && !canOpenPrivateLetters();
+  const letterEl = document.getElementById("detailLetter");
+  const messageEl = document.getElementById("detailMessage");
+  const sealEl = document.getElementById("detailSeal");
+  letterEl.classList.toggle("is-sealed", locked);
+  if (locked) {
+    messageEl.hidden = true;
+    sealEl.hidden = false;
+    document.getElementById("detailSealMount").innerHTML = sealSvgMarkup(flower.seal);
+    document.getElementById("detailSealedNote").textContent = t("garden.sealedNotice");
+  } else {
+    messageEl.hidden = false;
+    sealEl.hidden = true;
+    messageEl.textContent = `"${flower.message}"`;
+  }
+}
+
 function openDetail(flower) {
   currentFlower = flower;
   document.getElementById("detailName").textContent = flower.name;
   renderDetailMeta(flower);
-  document.getElementById("detailMessage").textContent = `"${flower.message}"`;
+  renderLetter(flower);
   player = createReplayPlayer(replaySvg, flower.strokes);
   overlay.classList.add("is-open");
   setTimeout(() => player.play(), 250);
@@ -197,10 +223,24 @@ initEnvironment(document.getElementById("gardenScene"));
 
 onLanguageChange(() => {
   plantLayer.querySelectorAll(".garden-plot").forEach((btn) => {
-    btn.setAttribute("aria-label", t("garden.flowerAria", { name: btn.dataset.name, author: btn.dataset.author }));
+    const key = btn.dataset.private ? "garden.flowerAriaSealed" : "garden.flowerAria";
+    btn.setAttribute("aria-label", t(key, { name: btn.dataset.name, author: btn.dataset.author }));
   });
-  if (currentFlower && overlay.classList.contains("is-open")) renderDetailMeta(currentFlower);
+  if (currentFlower && overlay.classList.contains("is-open")) {
+    renderDetailMeta(currentFlower);
+    renderLetter(currentFlower);
+  }
 });
+
+// A quiet welcome for whoever finds the one doorway that opens every
+// sealed letter — this page's own gate, not a security boundary.
+if (canOpenPrivateLetters()) {
+  const banner = document.createElement("div");
+  banner.className = "unlock-banner";
+  banner.textContent = t("garden.unlockedBanner");
+  document.body.appendChild(banner);
+  onLanguageChange(() => { banner.textContent = t("garden.unlockedBanner"); });
+}
 
 // If we just arrived from planting, open that flower's story automatically.
 if (justPlantedId) {
