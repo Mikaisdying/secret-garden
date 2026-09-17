@@ -18,7 +18,6 @@ local server rather than double-clicking the HTML file (`file://` URLs block
 module imports in most browsers).
 
 ```bash
-cd secret-garden
 python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
@@ -60,24 +59,62 @@ Every flower is stored as **vector stroke data**, not a raster image:
 {
   id, name, author, message, createdAt, plotX, plotY,
   strokes: [
-    { color: "#5b6f4e", size: 6, points: [{x,y}, {x,y}, ...] },
+    { type: "ink", color: "#5b6f4e", size: 6, points: [{x,y}, {x,y}, ...] },
+    { type: "fill", color: "#5b6f4e", d: "M ... Z", bbox: {...}, holes: [] },
+    ...
+  ],
+  actions: [
+    { type: "draw", stroke: { color, size, points } },
+    { type: "erase", path: [{x,y}, ...], size: 18 },
+    { type: "fill", entry: { type: "fill", color, d, bbox, holes: [] } },
+    { type: "clear" },
     ...
   ]
 }
 ```
 
+(older flowers omit `type` entirely — treated as `"ink"`. Older flowers also
+omit `actions` entirely — see replay below.)
+
 `js/draw.js` exports:
+
 - `createDrawingCanvas(svg, opts)` — attaches Pointer Events (mouse, touch,
   and stylus all work, pressure included where the device reports it) to an
   `<svg>`, captures each stroke's raw points, and exposes
-  `undo/redo/clear/getStrokes`.
-- `createReplayPlayer(svg, strokes)` — renders each stroke as a filled path,
-  recomputing its outline for a growing prefix of points each frame so the
-  flower appears to draw itself, stroke by stroke. Exposes
-  `play/pause/replay/setSpeed`.
-- `buildStrokePath(stroke)` / `freehandPathFromPoints(points, size)` — the
-  shared renderer used everywhere a stroke becomes an SVG path (the live
-  canvas, garden thumbnails, and the replay/preview panels).
+  `undo/redo/clear/getStrokes/getActions/setTool("brush"|"erase"|"fill")`.
+  The eraser does real partial removal — it splits/shrinks/drops "ink"
+  entries by their raw points and cuts a real transparent hole (an SVG
+  `<mask>`) into any "fill" entry it crosses, never a painted-over patch.
+  Undo/redo are full snapshots of `{ strokes, actions }` together, so a
+  multi-entry eraser drag, a fill, or a clear are each one undoable step, and
+  an undone action never lingers in either list.
+  `strokes` is the current, final drawing — what every renderer uses.
+  `actions` is a parallel chronological log of the draw/erase/fill/clear
+  steps that produced it, saved alongside `strokes` on the flower purely so
+  replay can recreate the actual drawing *process* later (see below) —
+  nothing reads it to render the current state.
+- `createReplayPlayer(svg, strokes, { actions })` — if `actions` is given and
+  non-empty, replays that log action by action: an ink stroke grows point by
+  point same as before, but an eraser action grows *its own* recorded path
+  and re-applies the same list-cutting logic the live canvas uses each
+  frame, so the cut visibly sweeps through the ink instead of the stroke
+  already being split. Without `actions` (older flowers), falls back to
+  revealing each already-final `strokes` entry in order — recomputing an ink
+  stroke's outline for a growing prefix of points, fading each fill in.
+  Either way, exposes `play/pause/replay/setSpeed`.
+- `buildStrokesGroup(strokes)` / `freehandPathFromPoints(points, size)` — the
+  shared renderer used everywhere a drawing becomes SVG (the live canvas,
+  garden thumbnails, and the preview panel).
+
+Fill (bucket) finds its boundary by rasterizing the current drawing to a
+throwaway offscreen canvas and flood-filling from the click — this is the one
+place pixels get touched, purely as a lookup. The filled region is traced
+back into one smoothed SVG path via `getSvgPathFromStroke`, and *that* path is
+what gets stored and rendered from then on, so the data (and everything drawn
+from it — preview, garden, scaling, `localStorage`) stays vector. A click
+that leaks past the canvas edge, or lands right on ink, fills nothing. A
+smaller enclosed "island" fully inside a filled region gets painted over
+rather than kept as a hole — a known simplification.
 
 Each stroke's points are shaped into a single filled outline with
 [`perfect-freehand`](https://github.com/steveruizok/perfect-freehand),
@@ -106,7 +143,11 @@ their own private garden. To make it genuinely shared:
      return data;
    }
    export async function addFlower(flower) {
-     const { data } = await supabase.from("flowers").insert(flower).select().single();
+     const { data } = await supabase
+       .from("flowers")
+       .insert(flower)
+       .select()
+       .single();
      return data;
    }
    ```

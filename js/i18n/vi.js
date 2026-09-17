@@ -51,6 +51,7 @@ export default {
     lightness: "Độ sáng",
     brushSize: "Kích thước bút",
     eraser: "Tẩy",
+    fill: "Đổ màu",
     undo: "Hoàn tác",
     redo: "Làm lại",
     clear: "Xóa hết",

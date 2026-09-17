@@ -53,6 +53,7 @@ export default {
     lightness: "Lightness",
     brushSize: "Brush size",
     eraser: "Eraser",
+    fill: "Fill",
     undo: "Undo",
     redo: "Redo",
     clear: "Clear",

@@ -11,13 +11,19 @@ const STORAGE_KEY = "secret-garden.flowers.v1";
 
 /**
  * @typedef {{x:number,y:number}} StrokePoint
- * @typedef {{points:StrokePoint[], color:string, size:number}} Stroke
+ * @typedef {{type?:"ink", points:StrokePoint[], color:string, size:number}} InkStroke
+ * @typedef {{type:"fill", d:string, color:string, bbox:object, holes:{points:StrokePoint[],size:number}[]}} FillStroke
  * @typedef {{
  *   id:string, name:string, author:string, message:string,
  *   createdAt:string, plotX:number, plotY:number, scale:number, hue:number,
- *   strokes:Stroke[], isPrivate:boolean, seal:(string|null)
+ *   strokes:(InkStroke|FillStroke)[],
+ *   actions:object[], isPrivate:boolean, seal:(string|null)
  * }} Flower
  */
+// `strokes` is the final drawing — what every renderer uses. `actions` is an
+// optional chronological log of draw/erase/fill/clear steps (see js/draw.js)
+// that lets the garden replay the actual drawing process, not just its
+// result; flowers saved before this existed simply omit it.
 
 function uid() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);

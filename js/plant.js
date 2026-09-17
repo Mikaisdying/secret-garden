@@ -1,5 +1,5 @@
 import { addFlower, getFlowers } from "./data.js";
-import { createDrawingCanvas, buildStrokePath } from "./draw.js";
+import { createDrawingCanvas, buildStrokesGroup } from "./draw.js";
 import { initI18n, t, onLanguageChange } from "./i18n/index.js";
 import { SEALS, sealSvgMarkup } from "./seals.js";
 
@@ -39,16 +39,30 @@ function initCanvasOnce() {
   canvas = createDrawingCanvas(drawSvg, {
     color: "#5b6f4e",
     size: 6,
-    eraseColor: "#fffdf6",
     onChange: (strokes) => { toStep2.disabled = strokes.length === 0; },
   });
 }
 initCanvasOnce();
 
+// Exactly one tool button (a color swatch, custom color, eraser or fill) is
+// ever marked active at a time, kept in sync with canvas.setColor()/setTool()
+// switching the actual tool — so the UI never shows "brush" while the canvas
+// is still in erase/fill mode, or vice versa.
+function toolButtons() {
+  return [
+    ...document.querySelectorAll(".swatch"),
+    document.getElementById("customColorBtn"),
+    document.getElementById("eraseBtn"),
+    document.getElementById("fillBtn"),
+  ];
+}
+function setActiveToolButton(active) {
+  toolButtons().forEach((b) => b.classList.toggle("is-selected", b === active));
+}
+
 document.querySelectorAll(".swatch[data-color]").forEach((btn) => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".swatch").forEach((b) => b.classList.remove("is-selected"));
-    btn.classList.add("is-selected");
+    setActiveToolButton(btn);
     canvas.setColor(btn.dataset.color);
     closeColorPopover();
   });
@@ -79,8 +93,7 @@ function closeColorPopover() {
 function selectCustomColor() {
   const hsl = currentCustomHsl();
   colorPreview.style.background = hsl;
-  document.querySelectorAll(".swatch").forEach((b) => b.classList.remove("is-selected"));
-  customColorBtn.classList.add("is-selected");
+  setActiveToolButton(customColorBtn);
   canvas.setColor(hsl);
 }
 colorPreview.style.background = currentCustomHsl();
@@ -106,9 +119,15 @@ document.addEventListener("keydown", (e) => {
 document.getElementById("brushSize").addEventListener("input", (e) => {
   canvas.setSize(Number(e.target.value));
 });
-document.getElementById("eraseBtn").addEventListener("click", (e) => {
-  canvas.setErasing(true);
-  e.currentTarget.classList.add("is-selected");
+const eraseBtn = document.getElementById("eraseBtn");
+const fillBtn = document.getElementById("fillBtn");
+eraseBtn.addEventListener("click", () => {
+  canvas.setTool("erase");
+  setActiveToolButton(eraseBtn);
+});
+fillBtn.addEventListener("click", () => {
+  canvas.setTool("fill");
+  setActiveToolButton(fillBtn);
 });
 document.getElementById("undoBtn").addEventListener("click", () => canvas.undo());
 document.getElementById("redoBtn").addEventListener("click", () => canvas.redo());
@@ -219,7 +238,7 @@ onLanguageChange(() => {
 // ---- Step 5: preview + plant ----
 function drawInto(svgEl, strokes) {
   svgEl.innerHTML = "";
-  strokes.forEach((s) => svgEl.appendChild(buildStrokePath(s)));
+  svgEl.appendChild(buildStrokesGroup(strokes));
 }
 
 function buildPreview() {
@@ -250,6 +269,7 @@ document.getElementById("plantBtn").addEventListener("click", () => {
     scale: 0.9 + Math.random() * 0.3,
     hue: 0,
     strokes: canvas.getStrokes(),
+    actions: canvas.getActions(),
     isPrivate: state.isPrivate,
     seal: state.isPrivate ? state.seal : null,
   });

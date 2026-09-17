@@ -1,5 +1,5 @@
 import { getFlowers, formatDate } from "./data.js";
-import { buildStrokePath, createReplayPlayer } from "./draw.js";
+import { buildStrokesGroup, createReplayPlayer } from "./draw.js";
 import { initI18n, t, getLocale, onLanguageChange } from "./i18n/index.js";
 import { initEnvironment } from "./environment.js";
 import { sealSvgMarkup } from "./seals.js";
@@ -129,7 +129,7 @@ function flowerThumb(flower) {
   wrap.setAttribute("viewBox", "0 0 120 120");
   wrap.setAttribute("width", "64");
   wrap.setAttribute("height", "64");
-  flower.strokes.forEach((s) => wrap.appendChild(buildStrokePath(s)));
+  wrap.appendChild(buildStrokesGroup(flower.strokes));
   return wrap;
 }
 
@@ -192,7 +192,7 @@ function openDetail(flower) {
   document.getElementById("detailName").textContent = flower.name;
   renderDetailMeta(flower);
   renderLetter(flower);
-  player = createReplayPlayer(replaySvg, flower.strokes);
+  player = createReplayPlayer(replaySvg, flower.strokes, { actions: flower.actions });
   overlay.classList.add("is-open");
   setTimeout(() => player.play(), 250);
 }
