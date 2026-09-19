@@ -83,9 +83,22 @@
 <div class="detail-overlay" id="detailOverlay">
   <div class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
     <button class="detail-panel__close" id="detailClose" aria-label="Close" data-i18n-aria-label="garden.close">×</button>
-    <div class="detail-panel__canvas-wrap">
-      <svg id="replaySvg" viewBox="0 0 120 120"></svg>
+
+    <div class="story-card story-card--polaroid" id="polaroidCard">
+      <div class="detail-panel__canvas-wrap">
+        <svg id="replaySvg" viewBox="0 0 120 120"></svg>
+      </div>
+      <div class="detail-panel__controls">
+        <button class="icon-btn icon-btn--sm" id="replayToggle" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
+        <button class="icon-btn icon-btn--sm" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
+        <select class="speed-select speed-select--sm" id="replaySpeed" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
+          <option value="0.5" data-i18n="garden.speedSlow">Slow</option>
+          <option value="1" selected data-i18n="garden.speedNormal">Normal</option>
+          <option value="2" data-i18n="garden.speedFast">Fast</option>
+        </select>
+      </div>
     </div>
+
     <h2 class="detail-panel__name" id="detailName">—</h2>
     <p class="detail-panel__meta" id="detailMeta">—</p>
     <div class="detail-panel__letter" id="detailLetter">
@@ -94,16 +107,6 @@
         <div class="detail-panel__seal-mount" id="detailSealMount"></div>
         <p class="detail-panel__sealed-note" id="detailSealedNote" data-i18n="garden.sealedNotice">This letter is sealed. Only the one it's meant for can open it.</p>
       </div>
-    </div>
-    <div class="detail-panel__controls">
-      <button class="icon-btn" id="replayPlay" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
-      <button class="icon-btn" id="replayPause" aria-label="Pause" data-i18n-aria-label="garden.replayPause">❚❚</button>
-      <button class="icon-btn" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
-      <select class="speed-select" id="replaySpeed" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
-        <option value="0.5" data-i18n="garden.speedSlow">Slow</option>
-        <option value="1" selected data-i18n="garden.speedNormal">Normal</option>
-        <option value="2" data-i18n="garden.speedFast">Fast</option>
-      </select>
     </div>
   </div>
 </div>

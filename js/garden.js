@@ -187,28 +187,53 @@ function renderLetter(flower) {
   }
 }
 
+const replayToggle = document.getElementById("replayToggle");
+
+function setReplayToggleState(isPlaying) {
+  const key = isPlaying ? "garden.replayPause" : "garden.replayPlay";
+  replayToggle.textContent = isPlaying ? "❚❚" : "▶";
+  replayToggle.dataset.i18nAriaLabel = key;
+  replayToggle.setAttribute("aria-label", t(key));
+}
+
 function openDetail(flower) {
   currentFlower = flower;
   document.getElementById("detailName").textContent = flower.name;
   renderDetailMeta(flower);
   renderLetter(flower);
-  player = createReplayPlayer(replaySvg, flower.strokes, { actions: flower.actions });
+  player = createReplayPlayer(replaySvg, flower.strokes, {
+    actions: flower.actions,
+    onDone: () => setReplayToggleState(false),
+  });
   overlay.classList.add("is-open");
-  setTimeout(() => player.play(), 250);
+  setReplayToggleState(false);
+  setTimeout(() => {
+    player.play();
+    setReplayToggleState(true);
+  }, 250);
 }
 
 function closeDetail() {
   overlay.classList.remove("is-open");
   player?.pause();
+  setReplayToggleState(false);
 }
 
 document.getElementById("detailClose").addEventListener("click", closeDetail);
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeDetail(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
 
-document.getElementById("replayPlay").addEventListener("click", () => player?.play());
-document.getElementById("replayPause").addEventListener("click", () => player?.pause());
-document.getElementById("replayAgain").addEventListener("click", () => player?.replay());
+replayToggle.addEventListener("click", () => {
+  if (!player) return;
+  const willPlay = replayToggle.textContent !== "❚❚";
+  if (willPlay) player.play();
+  else player.pause();
+  setReplayToggleState(willPlay);
+});
+document.getElementById("replayAgain").addEventListener("click", () => {
+  player?.replay();
+  setReplayToggleState(true);
+});
 document.getElementById("replaySpeed").addEventListener("change", (e) => {
   player?.setSpeed(parseFloat(e.target.value));
 });
