@@ -177,34 +177,15 @@
 }
 .detail-overlay.is-open { opacity: 1; pointer-events: auto; }
 
+/* No panel chrome here on purpose — the postage-stamp and polaroid cards
+   below are the only "surface" the user sees; the overlay just centers and
+   positions them. */
 .detail-panel {
   position: relative;
-  width: min(560px, 92vw);
-  max-height: min(680px, 88vh);
-  max-height: min(680px, 88svh);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--paper-shadow) transparent;
-  background-color: var(--ivory);
-  background-image: var(--frame-tl), var(--frame-tr), var(--frame-bl), var(--frame-br);
-  background-repeat: no-repeat;
-  background-position: top 6px left 6px, top 6px right 6px, bottom 6px left 6px, bottom 6px right 6px;
-  background-size: 40px 40px;
-  border: 1px solid var(--gold-deep);
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(74,56,38,0.28), 0 0 30px var(--glow-gold);
+  width: min(820px, 92vw);
   padding: var(--space-4);
   z-index: var(--z-overlay-panel);
-  opacity: 0;
-  transform: translateY(24px) scale(0.97);
-  transition: transform var(--dur-med) var(--ease-soft), opacity var(--dur-med) var(--ease-soft);
 }
-.detail-overlay.is-open .detail-panel { opacity: 1; transform: translateY(0) scale(1); }
-
-.detail-panel::-webkit-scrollbar { width: 6px; }
-.detail-panel::-webkit-scrollbar-track { background: transparent; }
-.detail-panel::-webkit-scrollbar-thumb { background: var(--paper-shadow); border-radius: 3px; }
 
 .detail-panel__close {
   position: absolute;
@@ -214,26 +195,110 @@
   height: 44px;
   display: grid;
   place-items: center;
-  background: none;
-  border: none;
+  background: var(--ivory);
+  border: 1px solid var(--paper-shadow);
+  border-radius: 999px;
+  box-shadow: var(--shadow-paper);
   font-size: 1.4rem;
   color: var(--ink-soft);
   line-height: 1;
   touch-action: manipulation;
+  z-index: 3;
 }
 
-/* --- Polaroid photo card: holds the drawing replay, tilted for a bit of
-   keepsake charm. Sits in normal flow above the name/message, not stacked
-   behind anything. --- */
+/* --- Story stack: the postage-stamp message card and the polaroid photo
+   card overlap like two keepsakes dropped on a desk. Clicking either one
+   lifts it above the other, so both stay reachable without either being
+   permanently hidden underneath. --- */
+.story-stack {
+  position: relative;
+  width: 100%;
+  height: clamp(420px, 48vw, 520px);
+  margin-bottom: var(--space-3);
+  transform: translateY(70px);
+  transition: transform var(--dur-med) var(--ease-soft);
+}
+.detail-overlay.is-open .story-stack { transform: translateY(0); }
+
+.story-card {
+  position: absolute;
+  cursor: pointer;
+  opacity: 0;
+  transition: transform var(--dur-med) var(--ease-soft),
+              box-shadow var(--dur-med) var(--ease-soft),
+              opacity var(--dur-med) var(--ease-soft);
+}
+.story-card:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 4px; }
+
+/* Stamp rises first, polaroid follows just behind it, so the two cards
+   read as climbing up from below rather than popping in together. */
+.detail-overlay.is-open .story-card--stamp { opacity: 1; transition-delay: 0.05s; }
+.detail-overlay.is-open .story-card--polaroid { opacity: 1; transition-delay: 0.15s; }
+
+.story-card.is-front { z-index: 2; }
+.story-card:not(.is-front) { z-index: 1; }
+
+/* Postage-stamp message card: name, meta, and the sealed/unsealed letter,
+   perched at a tilt like a stamp dropped on an envelope. */
+.story-card--stamp {
+  left: 0;
+  top: 50%;
+  width: min(600px, 84%);
+  /* Matches the exact width:height ratio of the "Subtract" shape in
+     Figma's Frame 3 (707.0436754985712 x 541.7181613150751, confirmed
+     straight from the file) so the perforated edge never stretches out
+     of shape, no matter the card's size. Mobile switches to the "Android
+     Medium - 3" ratio further down (see the 640px media query). */
+  aspect-ratio: 707.0436754985712 / 541.7181613150751;
+  box-shadow: var(--shadow-paper);
+  /* translateY(-50%) centers the card on the stack's vertical midpoint
+     regardless of its own height. The mask itself is drawn axis-aligned
+     (no baked-in rotation), so rotate() here turns the whole card as one
+     piece — border, text and shadow all tilt together and stay aligned. */
+  transform: translateY(-50%) rotate(-4deg);
+}
+/* The masked, scalloped shape lives on this inner surface instead of on
+   .story-card--stamp itself — CSS mask clips box-shadow on whatever
+   element it's applied to, so keeping the shadow on the unmasked outer
+   card is what makes it survive the raised/glowing .is-front state. */
+.story-card--stamp__surface {
+  width: 100%;
+  height: 100%;
+  background: var(--ivory);
+  padding: calc(var(--space-3) + 0.6rem);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -webkit-mask-image: url("../img/stamp-mask-landscape.svg");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: url("../img/stamp-mask-landscape.svg");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+.story-card--stamp__surface::-webkit-scrollbar { display: none; }
+.story-card--stamp.is-front {
+  transform: translateY(calc(-50% - 6px)) rotate(-4deg) scale(1.02);
+  box-shadow: 0 16px 34px rgba(74,56,38,0.24), 0 0 20px var(--glow-gold);
+}
+
+/* Polaroid photo card: holds the drawing replay, tilted the other way for
+   a bit of keepsake charm. */
 .story-card--polaroid {
-  width: min(240px, 60%);
-  margin: 0 auto var(--space-3);
+  right: 0;
+  top: 50%;
+  width: min(240px, 54%);
   background: var(--ivory);
   border: 1px solid var(--paper-shadow);
   border-radius: 4px;
   padding: var(--space-2) var(--space-2) var(--space-3);
   box-shadow: var(--shadow-paper);
-  transform: rotate(-2deg);
+  /* Same vertical-centering approach as the stamp card, so neither card's
+     dead space above/below biases the pair away from the stack's middle. */
+  transform: translateY(-50%) rotate(15deg);
+}
+.story-card--polaroid.is-front {
+  transform: translateY(calc(-50% - 6px)) rotate(15deg) scale(1.02);
+  box-shadow: 0 16px 34px rgba(74,56,38,0.3), 0 0 20px var(--glow-gold);
 }
 
 .detail-panel__canvas-wrap {
@@ -249,7 +314,7 @@
 .detail-panel__canvas-wrap svg { width: 82%; height: 82%; }
 
 .detail-panel__name {
-  font-size: var(--step-display-l);
+  font-size: var(--step-display-m);
   font-style: italic;
   margin-bottom: 0.2rem;
 }
@@ -257,18 +322,18 @@
 .detail-panel__meta {
   color: var(--ink-soft);
   font-size: var(--step-small);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
-/* --- The message, presented as a little folded letter rather than a
-   plain quote — a private one wears a wax seal that blocks the text. --- */
+/* --- The message, presented as a little folded letter. Only ever shown
+   for a letter the viewer is allowed to read — a private one shows the
+   envelope below instead of this. --- */
 .detail-panel__letter {
   position: relative;
   background: var(--ivory-deep);
   border: 1px solid var(--paper-shadow);
   border-radius: 4px 4px 12px 12px;
   padding: var(--space-3);
-  margin-bottom: var(--space-4);
   box-shadow: var(--shadow-paper);
   transform: rotate(-0.4deg);
 }
@@ -293,23 +358,84 @@
   border-left: 2px solid var(--gold-deep);
   padding-left: var(--space-3);
 }
-.detail-panel__message[hidden] { display: none; }
 
-.detail-panel__seal {
+/* --- Sealed envelope: what a private letter shows instead of the story
+   stack — just the envelope and its wax seal, nothing openable. --- */
+.story-envelope {
   position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: var(--space-2) 0;
+  width: 100%;
+  height: clamp(300px, 58vw, 400px);
+  margin-bottom: var(--space-3);
+  background: var(--ivory);
+  border: 1px solid var(--gold-deep);
+  border-radius: 10px;
+  box-shadow: var(--shadow-paper);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  transition: transform var(--dur-med) var(--ease-soft), opacity var(--dur-med) var(--ease-soft);
 }
-.detail-panel__seal[hidden] { display: none; }
-.detail-panel__seal-mount {
+.detail-overlay.is-open .story-envelope { opacity: 1; transform: translateY(0) scale(1); }
+
+.story-envelope__flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 58%;
+  display: block;
+}
+.story-envelope__flap-fill { fill: var(--ivory-deep); }
+.story-envelope__flap-line {
+  fill: none;
+  stroke: var(--gold-deep);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.story-envelope__label {
+  position: absolute;
+  top: 12%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: var(--step-small);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.story-envelope__author {
+  position: absolute;
+  top: 21%;
+  left: var(--space-3);
+  right: var(--space-3);
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-display-m);
+  color: var(--ink);
+}
+
+.story-envelope__seal {
+  position: absolute;
+  top: 56%;
+  left: 50%;
   width: 76px;
   height: 76px;
-  margin: 0 auto var(--space-2);
+  transform: translate(-50%, -50%);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
-.detail-panel__seal-mount .wax-seal { display: block; width: 100%; height: 100%; }
-.detail-panel__sealed-note {
+.story-envelope__seal .wax-seal { display: block; width: 100%; height: 100%; }
+
+.story-envelope__note {
+  position: absolute;
+  bottom: 12%;
+  left: var(--space-4);
+  right: var(--space-4);
+  text-align: center;
   font-family: var(--font-display);
   font-style: italic;
   color: var(--ink-soft);
@@ -361,16 +487,34 @@
     width: 100%;
     height: 100%;
     height: 100dvh;
-    max-height: none;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
     padding: var(--space-3);
     padding-top: calc(var(--space-3) + env(safe-area-inset-top, 0px));
     padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-  .story-card--polaroid { width: min(200px, 66%); }
-  .detail-panel__name { font-size: var(--step-display-m); }
+  /* Matches the "Android Medium - 3" phone mockup in the Figma file: the
+     polaroid becomes the dominant card (bigger, lower, centered-right) and
+     the stamp shrinks to a peek in the upper-left corner behind it, instead
+     of the desktop balance where the stamp leads. */
+  .story-stack { height: clamp(430px, 118vw, 520px); margin-top: var(--space-3); }
+  /* Switches to the exact "Android Medium - 3" ratio confirmed from Figma
+     (348.2365483188478 x 454.3117986616853) and the portrait mask asset —
+     the letter stands upright on a phone screen instead of lying on its
+     side the way it does on desktop. Sized generously and padded less so
+     the title/message don't wrap onto cramped half-lines. */
+  /* Same axis-aligned mask + single rotate() as desktop, at its own angle. */
+  .story-card--stamp { width: min(300px, 84%); aspect-ratio: 348.2365483188478 / 454.3117986616853; left: 0; top: 2%; transform: rotate(-6deg); }
+  .story-card--stamp__surface {
+    padding: calc(var(--space-2) + 0.3rem);
+    -webkit-mask-image: url("../img/stamp-mask.svg");
+    mask-image: url("../img/stamp-mask.svg");
+  }
+  .story-card--stamp.is-front { transform: rotate(-6deg) translateY(-6px) scale(1.02); }
+  .story-card--polaroid { width: min(230px, 62%); left: auto; right: 0; top: 40%; transform: rotate(8deg); }
+  .story-card--polaroid.is-front { transform: rotate(8deg) translateY(-6px) scale(1.02); }
+  .story-envelope { height: clamp(260px, 90vw, 340px); margin-top: var(--space-3); }
   .detail-panel__message { font-size: 1.1rem; }
   .detail-panel__controls { justify-content: center; }
   .speed-select { padding: 0.6rem 0.8rem; }

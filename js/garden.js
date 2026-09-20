@@ -160,9 +160,31 @@ function renderFlowers() {
 
 // --- Detail panel + replay wiring ---
 const overlay = document.getElementById("detailOverlay");
+const detailPanel = document.getElementById("detailPanel");
 const replaySvg = document.getElementById("replaySvg");
+const stampCard = document.getElementById("stampCard");
+const polaroidCard = document.getElementById("polaroidCard");
+const storyStack = document.getElementById("storyStack");
+const storyEnvelope = document.getElementById("storyEnvelope");
 let player = null;
 let currentFlower = null;
+
+function bringToFront(card) {
+  [stampCard, polaroidCard].forEach((c) => c.classList.toggle("is-front", c === card));
+}
+
+stampCard.addEventListener("click", () => bringToFront(stampCard));
+stampCard.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); bringToFront(stampCard); }
+});
+polaroidCard.addEventListener("click", (e) => {
+  if (e.target.closest("button, select")) return;
+  bringToFront(polaroidCard);
+});
+polaroidCard.addEventListener("keydown", (e) => {
+  if (e.target !== polaroidCard) return;
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); bringToFront(polaroidCard); }
+});
 
 function renderDetailMeta(flower) {
   document.getElementById("detailMeta").textContent =
@@ -171,20 +193,17 @@ function renderDetailMeta(flower) {
 
 function renderLetter(flower) {
   const locked = flower.isPrivate && !canOpenPrivateLetters();
-  const letterEl = document.getElementById("detailLetter");
-  const messageEl = document.getElementById("detailMessage");
-  const sealEl = document.getElementById("detailSeal");
-  letterEl.classList.toggle("is-sealed", locked);
+  storyStack.hidden = locked;
+  storyEnvelope.hidden = !locked;
   if (locked) {
-    messageEl.hidden = true;
-    sealEl.hidden = false;
-    document.getElementById("detailSealMount").innerHTML = sealSvgMarkup(flower.seal);
-    document.getElementById("detailSealedNote").textContent = t("garden.sealedNotice");
+    document.getElementById("envelopeAuthor").textContent = flower.author;
+    document.getElementById("envelopeSealMount").innerHTML = sealSvgMarkup(flower.seal);
+    document.getElementById("envelopeLabel").textContent = t("garden.envelopeFrom");
+    document.getElementById("envelopeNote").textContent = t("garden.sealedNotice");
   } else {
-    messageEl.hidden = false;
-    sealEl.hidden = true;
-    messageEl.textContent = `"${flower.message}"`;
+    document.getElementById("detailMessage").textContent = `"${flower.message}"`;
   }
+  return locked;
 }
 
 const replayToggle = document.getElementById("replayToggle");
@@ -198,19 +217,25 @@ function setReplayToggleState(isPlaying) {
 
 function openDetail(flower) {
   currentFlower = flower;
+  detailPanel.setAttribute("aria-label", flower.name);
   document.getElementById("detailName").textContent = flower.name;
   renderDetailMeta(flower);
-  renderLetter(flower);
-  player = createReplayPlayer(replaySvg, flower.strokes, {
-    actions: flower.actions,
-    onDone: () => setReplayToggleState(false),
-  });
+  const locked = renderLetter(flower);
   overlay.classList.add("is-open");
+  player?.pause();
+  player = null;
   setReplayToggleState(false);
-  setTimeout(() => {
-    player.play();
-    setReplayToggleState(true);
-  }, 250);
+  if (!locked) {
+    bringToFront(polaroidCard);
+    player = createReplayPlayer(replaySvg, flower.strokes, {
+      actions: flower.actions,
+      onDone: () => setReplayToggleState(false),
+    });
+    setTimeout(() => {
+      player.play();
+      setReplayToggleState(true);
+    }, 250);
+  }
 }
 
 function closeDetail() {
@@ -219,7 +244,6 @@ function closeDetail() {
   setReplayToggleState(false);
 }
 
-document.getElementById("detailClose").addEventListener("click", closeDetail);
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeDetail(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
 

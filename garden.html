@@ -14,7 +14,6 @@
 <nav class="garden-nav" aria-label="Primary">
   <div class="garden-nav__links">
     <a href="garden.html" aria-current="page" data-i18n="nav.garden">Garden</a>
-    <a href="plant.html" data-i18n="nav.plant">Plant a Flower</a>
     <a href="about.html" data-i18n="nav.about">About</a>
     <span class="garden-nav__lang" data-lang-switcher></span>
   </div>
@@ -81,32 +80,47 @@
 </main>
 
 <div class="detail-overlay" id="detailOverlay">
-  <div class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
-    <button class="detail-panel__close" id="detailClose" aria-label="Close" data-i18n-aria-label="garden.close">×</button>
-
-    <div class="story-card story-card--polaroid" id="polaroidCard">
-      <div class="detail-panel__canvas-wrap">
-        <svg id="replaySvg" viewBox="0 0 120 120"></svg>
+  <div class="detail-panel" role="dialog" aria-modal="true" id="detailPanel">
+    <div class="story-stack" id="storyStack" hidden>
+      <div class="story-card story-card--stamp" id="stampCard" tabindex="0" role="button"
+           aria-label="Bring the message card to the front" data-i18n-aria-label="garden.bringMessageForward">
+        <div class="story-card--stamp__surface">
+          <p class="detail-panel__meta" id="detailMeta">—</p>
+          <h2 class="detail-panel__name" id="detailName">—</h2>
+          <div class="detail-panel__letter" id="detailLetter">
+            <p class="detail-panel__message" id="detailMessage">—</p>
+          </div>
+        </div>
       </div>
-      <div class="detail-panel__controls">
-        <button class="icon-btn icon-btn--sm" id="replayToggle" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
-        <button class="icon-btn icon-btn--sm" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
-        <select class="speed-select speed-select--sm" id="replaySpeed" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
-          <option value="0.5" data-i18n="garden.speedSlow">Slow</option>
-          <option value="1" selected data-i18n="garden.speedNormal">Normal</option>
-          <option value="2" data-i18n="garden.speedFast">Fast</option>
-        </select>
+
+      <div class="story-card story-card--polaroid is-front" id="polaroidCard" tabindex="0" role="button"
+           aria-label="Bring the drawing card to the front" data-i18n-aria-label="garden.bringPhotoForward">
+        <div class="detail-panel__canvas-wrap">
+          <svg id="replaySvg" viewBox="0 0 120 120"></svg>
+        </div>
+        <div class="detail-panel__controls">
+          <button class="icon-btn icon-btn--sm" id="replayToggle" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
+          <button class="icon-btn icon-btn--sm" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
+          <select class="speed-select speed-select--sm" id="replaySpeed" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
+            <option value="0.5" data-i18n="garden.speedSlow">Slow</option>
+            <option value="1" selected data-i18n="garden.speedNormal">Normal</option>
+            <option value="2" data-i18n="garden.speedFast">Fast</option>
+          </select>
+        </div>
       </div>
     </div>
 
-    <h2 class="detail-panel__name" id="detailName">—</h2>
-    <p class="detail-panel__meta" id="detailMeta">—</p>
-    <div class="detail-panel__letter" id="detailLetter">
-      <p class="detail-panel__message" id="detailMessage">—</p>
-      <div class="detail-panel__seal" id="detailSeal" hidden>
-        <div class="detail-panel__seal-mount" id="detailSealMount"></div>
-        <p class="detail-panel__sealed-note" id="detailSealedNote" data-i18n="garden.sealedNotice">This letter is sealed. Only the one it's meant for can open it.</p>
-      </div>
+    <!-- Sealed letters show only this envelope — no story cards, no replay,
+         nothing but the seal, until the recipient's own doorway opens it. -->
+    <div class="story-envelope" id="storyEnvelope" hidden>
+      <svg class="story-envelope__flap" viewBox="0 0 300 130" preserveAspectRatio="none" aria-hidden="true">
+        <path class="story-envelope__flap-fill" d="M0,0 L300,0 L300,4 L150,120 L0,4 Z"/>
+        <path class="story-envelope__flap-line" d="M0,4 L150,120 L300,4"/>
+      </svg>
+      <p class="story-envelope__label" id="envelopeLabel" data-i18n="garden.envelopeFrom">A letter from</p>
+      <p class="story-envelope__author" id="envelopeAuthor">—</p>
+      <div class="story-envelope__seal" id="envelopeSealMount"></div>
+      <p class="story-envelope__note" id="envelopeNote" data-i18n="garden.sealedNotice">This letter is sealed. Only the one it's meant for can open it.</p>
     </div>
   </div>
 </div>

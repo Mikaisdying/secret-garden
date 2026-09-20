@@ -38,6 +38,9 @@ export default {
     plantedBy: "Planted by {author} · {date}",
     sealedNotice: "This letter is sealed. Only the one it's meant for can open it.",
     unlockedBanner: "Every letter opens here, just for you.",
+    envelopeFrom: "A letter from",
+    bringMessageForward: "Bring the message card to the front",
+    bringPhotoForward: "Bring the drawing card to the front",
   },
   plant: {
     swatchMoss: "Moss green",

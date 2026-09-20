@@ -12,75 +12,23 @@
 </head>
 <body>
 
-<nav class="garden-nav" aria-label="Primary">
-  <div class="garden-nav__links">
-    <a href="garden.html" data-i18n="nav.garden">Garden</a>
-    <a href="plant.html" data-i18n="nav.plant">Plant a Flower</a>
-    <a href="about.html" data-i18n="nav.about">About</a>
-    <span class="garden-nav__lang" data-lang-switcher></span>
-  </div>
-</nav>
+<a class="intro" id="introScreen" href="garden.html" data-i18n-aria-label="landing.ctaEnter" aria-label="Enter the Garden">
+  <span class="intro__grain" aria-hidden="true"></span>
 
-<section class="hero">
-  <div class="hero__sky" id="fireflyLayer" aria-hidden="true">
-    <div class="hero__sun"></div>
-  </div>
+  <span class="visually-hidden">
+    <h1><span data-i18n="landing.title1">Welcome to the</span> <span data-i18n="landing.title2">Secret Garden</span></h1>
+    <span data-i18n="landing.sub">A little place for flowers, memories, and words that deserve to grow.</span>
+  </span>
 
-  <svg class="hero__layer" id="hillsFar" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true" style="z-index:1;">
-    <path d="M0,220 C240,150 420,260 700,200 C960,140 1200,240 1440,180 L1440,420 L0,420 Z" fill="#cddcb8"></path>
-  </svg>
-
-  <svg class="hero__layer" id="hillsNear" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true" style="z-index:2;">
-    <path d="M0,180 C200,120 360,220 620,170 C880,120 1080,210 1440,140 L1440,320 L0,320 Z" fill="#a9c08a"></path>
-    <!-- trees, silhouette layer -->
-    <g id="treeGroup" fill="#7c9463" opacity="0.9"></g>
-  </svg>
-
-  <svg class="hero__layer" id="groundLayer" viewBox="0 0 1440 200" preserveAspectRatio="none" aria-hidden="true" style="z-index:3;">
-    <path d="M0,90 C220,40 420,120 700,70 C980,20 1200,100 1440,60 L1440,200 L0,200 Z" fill="#83975f"></path>
-    <g id="grassBlades"></g>
-  </svg>
-
-  <div class="hero__content">
-    <svg class="hero__eyebrow-image" viewBox="0 0 48 48" aria-hidden="true">
-      <path d="M24 6c4 6 4 12 0 18-4-6-4-12 0-18Z" fill="#93a67e"/>
-      <path d="M24 42c-4-6-4-12 0-18 4 6 4 12 0 18Z" fill="#5b6f4e"/>
-      <circle cx="24" cy="24" r="3" fill="#e3b94f"/>
+  <span class="intro__icon-wrap">
+    <svg class="intro__icon" viewBox="0 0 105.649 105.876" aria-hidden="true">
+      <path id="introSproutPath" d="M61.2654 105.876V51.5999C24.7207 51.5999 5.72067 31.5596 2.72067 4.37567C2.72067 4.37567 30.549 -3.0426 47.7356 11.6265C64.9222 26.2957 61.2654 37.8757 61.2654 37.8757C61.2654 37.8757 67.5639 31.2487 75.8923 25.5622C84.2207 19.8757 102.221 25.5622 102.221 25.5622C94.6358 42.5044 88.7866 46.8041 75.8923 46.4657" />
+      <circle id="introDot" class="intro__dot" r="3.2" cx="0" cy="0" />
     </svg>
-    <h1 class="hero__title"><span data-i18n="landing.title1">Welcome to the</span><br/><span data-i18n="landing.title2">Secret Garden</span></h1>
-    <p class="hero__sub" data-i18n="landing.sub">A little place for flowers, memories, and words that deserve to grow.</p>
-    <div class="hero__ctas">
-      <a class="btn btn--primary" href="garden.html" data-i18n="landing.ctaEnter">Enter the Garden</a>
-    </div>
-  </div>
+  </span>
 
-  <a class="shovel-fab" href="plant.html" aria-label="Plant a Flower" data-i18n-aria-label="landing.ctaPlant" title="Plant a Flower" data-i18n-title="landing.ctaPlant">
-    <svg viewBox="0 0 200 400" fill="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="shovelWood2" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#f1d9ae"/>
-          <stop offset="55%" stop-color="#dab97e"/>
-          <stop offset="100%" stop-color="#b98f52"/>
-        </linearGradient>
-        <linearGradient id="shovelBlade2" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#eef1f5"/>
-          <stop offset="50%" stop-color="#c7cbd3"/>
-          <stop offset="100%" stop-color="#8c9099"/>
-        </linearGradient>
-      </defs>
-      <g transform="rotate(16 100 200)">
-        <path d="M72 10c0-9 12-9 28-9s28 0 28 9-12 9-28 9-28 0-28-9Z" fill="#1c1c1c"/>
-        <rect x="76" y="4" width="48" height="7" rx="3.5" fill="#000" opacity="0.35"/>
-        <path d="M76 18c-6 3-8 10-8 20l10 6c1-10 2-18 6-23Z" fill="#1c1c1c"/>
-        <path d="M124 18c6 3 8 10 8 20l-10 6c-1-10-2-18-6-23Z" fill="#1c1c1c"/>
-        <rect x="93" y="40" width="14" height="215" rx="6" fill="url(#shovelWood2)" stroke="#8f6a37" stroke-width="1"/>
-        <rect x="88" y="250" width="24" height="20" rx="3" fill="#4b4e56" stroke="#2c2e33" stroke-width="1.5"/>
-        <path d="M62 268c0-6 17-9 38-9s38 3 38 9l-6 20c-5 15-14 27-22 40-3 5-9 5-12 0-8-13-17-25-22-40Z" fill="url(#shovelBlade2)" stroke="#5b5e66" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M78 272c3 20 9 40 22 56" stroke="#fff" stroke-width="2" opacity="0.35" stroke-linecap="round"/>
-      </g>
-    </svg>
-  </a>
-</section>
+  <iframe class="garden-preload" id="gardenPreload" src="garden.html" tabindex="-1" aria-hidden="true" inert title="The Garden (preloading)"></iframe>
+</a>
 
 <script type="module" src="js/landing.js"></script>
 </body>

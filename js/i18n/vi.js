@@ -36,6 +36,9 @@ export default {
     plantedBy: "Được trồng bởi {author} · {date}",
     sealedNotice: "Bức thư này đã được niêm phong. Chỉ người mà nó dành cho mới có thể mở ra.",
     unlockedBanner: "Ở đây, mọi bức thư đều mở ra, chỉ dành riêng cho bạn.",
+    envelopeFrom: "Một bức thư từ",
+    bringMessageForward: "Đưa thẻ lời nhắn lên trên cùng",
+    bringPhotoForward: "Đưa thẻ hình vẽ lên trên cùng",
   },
   plant: {
     swatchMoss: "Xanh rêu",

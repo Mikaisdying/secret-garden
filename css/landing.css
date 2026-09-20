@@ -1,93 +1,83 @@
-.hero {
+.intro {
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh; /* avoids mobile browser chrome cutting off the hero */
-  overflow: hidden;
   display: flex;
-  align-items: flex-end;
-  background: linear-gradient(180deg, #f8f1de 0%, #f2e9cd 55%, #e8dcb8 100%);
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh; /* avoids mobile browser chrome cutting off the intro */
+  overflow: hidden;
+  background: linear-gradient(178deg, #fff8ef 55%, #ffffff 100%);
+  color: inherit;
+  text-decoration: none;
 }
 
-.hero__sky {
+/* Canvas-grain texture straight from the Figma frame, laid over the
+   cream gradient the same way the design does: full-bleed, cover-fit,
+   multiplied at low opacity. */
+.intro__grain {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  background-image: url("../img/intro-paper.png");
+  background-size: cover;
+  background-position: center;
 }
 
-.hero__sun {
-  position: absolute;
-  top: 12%;
-  right: 14%;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(227, 185, 79, 0.55) 0%, rgba(227, 185, 79, 0.15) 55%, rgba(227, 185, 79, 0) 75%);
-  filter: blur(2px);
-  animation: sun-breathe 8s ease-in-out infinite;
-}
-
-@keyframes sun-breathe {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.06); opacity: 0.85; }
-}
-
-.hero__layer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
-}
-
-.hero__content {
+.intro__icon-wrap {
   position: relative;
-  z-index: 5;
-  padding: var(--space-6) var(--space-5) var(--space-6) var(--space-5);
-  max-width: 620px;
-  animation: rise-in 1.1s var(--ease-soft) both;
+  z-index: 2;
+  width: 140px;
+  height: 140px;
 }
 
-@keyframes rise-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+.intro__icon {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.hero__eyebrow-image {
-  width: 46px;
-  height: auto;
-  margin-bottom: var(--space-3);
-  opacity: 0.85;
+.intro__icon path {
+  fill: none;
+  stroke: #bac080;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Hidden until JS has set stroke-dasharray/dashoffset — otherwise the
+     browser paints the fully-drawn line for one frame before the draw
+     animation takes over, which reads as a flash/glitch on load. */
+  opacity: 0;
 }
 
-.hero__title {
-  font-size: var(--step-display-xl);
-  font-style: italic;
-  line-height: 1.05;
-  color: var(--ink);
-  margin-bottom: var(--space-3);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.3), 0 0 24px var(--glow-gold);
+.intro__dot {
+  fill: var(--gold);
+  filter: drop-shadow(0 0 4px var(--glow-gold));
+  opacity: 0;
+  transition: opacity var(--dur-fast) ease;
 }
+.intro__dot.is-active { opacity: 1; }
 
-.hero__sub {
-  font-size: 1.15rem;
-  color: var(--ink-soft);
-  max-width: 40ch;
-  margin-bottom: var(--space-4);
+/* Garden.html loads silently in this iframe from the moment the intro
+   appears, so by the time the sprout finishes drawing it's already
+   rendered and ready — the "reveal" below is just uncovering real,
+   already-loaded content growing from the icon's center, not swapping
+   in a placeholder color and hoping the real page catches up in time. */
+.garden-preload {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  z-index: 3;
+  pointer-events: none;
+  clip-path: circle(0% at 50% 50%);
 }
-
-.hero__ctas {
-  display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+.garden-preload.is-active {
+  transition: clip-path var(--dur-slow) var(--ease-soft);
+  clip-path: circle(150% at 50% 50%);
 }
 
 @media (max-width: 640px) {
-  .hero__content { padding: var(--space-5) var(--space-3) var(--space-5); }
-  .hero__sun { width: 140px; height: 140px; }
-  .hero__sub { max-width: 32ch; }
-}
-
-@media (max-width: 380px) {
-  .hero__ctas { flex-direction: column; align-items: stretch; }
-  .hero__ctas .btn { text-align: center; }
+  .intro__icon-wrap { width: 108px; height: 108px; }
 }

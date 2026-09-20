@@ -25,7 +25,8 @@ python3 -m http.server 8000
 or with Node:
 
 ```bash
-npx serve .
+npx serve . -l 3000
+# then visit http://localhost:3000
 ```
 
 ## File tree
