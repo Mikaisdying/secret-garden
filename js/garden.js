@@ -24,14 +24,15 @@ function paintScenery() {
     const leafColors = ["#5f7a45", "#6f8f52", "#7a9b5e"];
     const fanAngles = { 1: [0], 2: [-14, 14], 3: [-18, 0, 18] };
     const fanSpread = { 1: [0], 2: [-9, 9], 3: [-16, 0, 16] };
+    const totalBlades = 220;
     let planted = 0;
-    while (planted < 60) {
+    while (planted < totalBlades) {
       const clusterSize = 1 + Math.floor(rg() * 3);
       const cx = rg() * 1440;
       const cy = rg() * 900;
       const angles = fanAngles[clusterSize];
       const spread = fanSpread[clusterSize];
-      for (let j = 0; j < clusterSize && planted < 60; j++) {
+      for (let j = 0; j < clusterSize && planted < totalBlades; j++) {
         const len = 10 + rg() * 6;
         const width = len * 0.32;
         const angle = angles[j];
