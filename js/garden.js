@@ -18,34 +18,12 @@ function seededRandom(seed) {
 }
 
 function paintScenery() {
-  const rand = seededRandom(7);
-  const far = document.getElementById("farTrees");
-  const mid = document.getElementById("midTrees");
-  [far, mid].forEach((group, gi) => {
-    if (!group) return;
-    const n = gi === 0 ? 7 : 5;
-    for (let i = 0; i < n; i++) {
-      const x = 60 + rand() * 1320;
-      const y = (gi === 0 ? 380 : 480) + rand() * 40;
-      const r = (gi === 0 ? 26 : 40) + rand() * 20;
-      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      [0, 1, 2].forEach((n2) => {
-        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        c.setAttribute("cx", x + (n2 - 1) * r * 0.5);
-        c.setAttribute("cy", y - r * 0.3);
-        c.setAttribute("r", r * 0.55);
-        g.appendChild(c);
-      });
-      group.appendChild(g);
-    }
-  });
-
   const grass = document.getElementById("grassTufts");
   if (grass) {
     const rg = seededRandom(21);
-    for (let i = 0; i < 26; i++) {
+    for (let i = 0; i < 60; i++) {
       const x = rg() * 1440;
-      const y = 640 + rg() * 220;
+      const y = rg() * 900;
       const blade = document.createElementNS("http://www.w3.org/2000/svg", "path");
       const h = 12 + rg() * 14;
       blade.setAttribute("d", `M${x},${y} Q${x + 4},${y - h / 2} ${x + 7},${y - h}`);
@@ -59,14 +37,17 @@ function paintScenery() {
 
   const shrooms = document.getElementById("mushrooms");
   if (shrooms) {
-    [[300, 760], [980, 700], [1310, 800]].forEach(([x, y]) => {
+    const rs = seededRandom(33);
+    for (let i = 0; i < 6; i++) {
+      const x = 80 + rs() * 1280;
+      const y = 60 + rs() * 780;
       const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
       g.innerHTML = `
         <ellipse cx="${x}" cy="${y}" rx="10" ry="5" fill="#c98a7d"/>
         <rect x="${x - 2}" y="${y}" width="4" height="8" fill="#e8e0c8"/>
       `;
       shrooms.appendChild(g);
-    });
+    }
   }
 }
 

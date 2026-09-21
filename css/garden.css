@@ -6,12 +6,12 @@
   min-height: 520px;
   overflow: hidden;
   touch-action: pan-y; /* flowers are tapped, not dragged — allow normal scroll gestures */
-  background: linear-gradient(180deg, #f3ecd4 0%, #e9dfba 60%, #d9cd9e 100%);
+  background: linear-gradient(180deg, #a9c08a 0%, #93a86e 55%, #83975e 100%);
   transition: background var(--dur-slow) var(--ease-soft);
 }
 
 .garden-scene.is-night {
-  background: linear-gradient(180deg, #141a33 0%, #1c2340 55%, #262b46 100%);
+  background: linear-gradient(180deg, #1c2b1e 0%, #223424 55%, #1a2a1c 100%);
 }
 
 .garden-scene__layer {
@@ -21,8 +21,6 @@
   height: 100%;
 }
 
-.garden-scene__far   { z-index: 1; opacity: 0.85; }
-.garden-scene__mid   { z-index: 2; }
 .garden-scene__ground{ z-index: 3; }
 .garden-scene__plants{ z-index: 4; }
 
@@ -59,17 +57,6 @@
 }
 .garden-scene:not(.is-day) .wind-leaf { display: none; }
 
-.garden-scene.is-day #midTrees,
-.garden-scene.is-day #farTrees {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: tree-breeze 4.5s ease-in-out infinite;
-}
-@keyframes tree-breeze {
-  0%, 100% { transform: rotate(-0.6deg); }
-  50% { transform: rotate(0.6deg); }
-}
-
 /* --- Rain: falls in front of everything, including the flowers --- */
 .garden-scene__rain {
   z-index: 8;
@@ -95,8 +82,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wind-leaf { animation: none; opacity: 0.5; }
-  .garden-scene.is-day #midTrees,
-  .garden-scene.is-day #farTrees { animation: none; }
   .rain-drop { animation: none; opacity: 0; }
   .garden-scene__rain { display: none; }
 }
