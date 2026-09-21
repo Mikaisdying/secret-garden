@@ -7,13 +7,11 @@ export default {
     titleHome: "Khu Vườn Bí Mật — một nơi nhỏ cho hoa, kỷ niệm và lời nhắn",
     titleGarden: "Khu Vườn — Khu Vườn Bí Mật",
     titlePlant: "Trồng Một Bông Hoa — Khu Vườn Bí Mật",
-    titleAbout: "Giới Thiệu — Khu Vườn Bí Mật",
     description: "Một khu vườn số nơi bạn có thể vẽ một bông hoa, để lại một lời nhắn, và trồng nó cho người khác tìm thấy.",
   },
   nav: {
     garden: "Khu Vườn",
     plant: "Trồng Một Bông Hoa",
-    about: "Giới Thiệu",
   },
   landing: {
     title1: "Chào mừng đến với",

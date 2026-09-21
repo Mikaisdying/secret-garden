@@ -4,7 +4,7 @@
   padding: calc(var(--space-6) + var(--space-2)) var(--space-3) var(--space-5);
   display: flex;
   justify-content: center;
-  background: radial-gradient(ellipse at top, #f8f2df 0%, var(--ivory) 60%);
+  background: radial-gradient(ellipse at top, #f8f7f5 0%, var(--ivory) 60%);
 }
 
 .plant-card {

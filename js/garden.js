@@ -21,17 +21,33 @@ function paintScenery() {
   const grass = document.getElementById("grassTufts");
   if (grass) {
     const rg = seededRandom(21);
-    for (let i = 0; i < 60; i++) {
-      const x = rg() * 1440;
-      const y = rg() * 900;
-      const blade = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      const h = 12 + rg() * 14;
-      blade.setAttribute("d", `M${x},${y} Q${x + 4},${y - h / 2} ${x + 7},${y - h}`);
-      blade.setAttribute("stroke", "#5f7a45");
-      blade.setAttribute("stroke-width", "2");
-      blade.setAttribute("fill", "none");
-      blade.setAttribute("opacity", "0.45");
-      grass.appendChild(blade);
+    const leafColors = ["#5f7a45", "#6f8f52", "#7a9b5e"];
+    const fanAngles = { 1: [0], 2: [-14, 14], 3: [-18, 0, 18] };
+    const fanSpread = { 1: [0], 2: [-9, 9], 3: [-16, 0, 16] };
+    let planted = 0;
+    while (planted < 60) {
+      const clusterSize = 1 + Math.floor(rg() * 3);
+      const cx = rg() * 1440;
+      const cy = rg() * 900;
+      const angles = fanAngles[clusterSize];
+      const spread = fanSpread[clusterSize];
+      for (let j = 0; j < clusterSize && planted < 60; j++) {
+        const len = 10 + rg() * 6;
+        const width = len * 0.32;
+        const angle = angles[j];
+        const bx = cx + spread[j];
+        const color = leafColors[Math.floor(rg() * leafColors.length)];
+        const blade = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        blade.setAttribute(
+          "d",
+          `M0,0 C${width},${-len * 0.4} ${width * 0.6},${-len * 0.85} 0,${-len} C${-width * 0.2},${-len * 0.85} ${-width * 0.1},${-len * 0.4} 0,0 Z`
+        );
+        blade.setAttribute("fill", color);
+        blade.setAttribute("opacity", "0.55");
+        blade.setAttribute("transform", `translate(${bx},${cy}) rotate(${angle})`);
+        grass.appendChild(blade);
+        planted++;
+      }
     }
   }
 

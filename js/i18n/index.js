@@ -14,7 +14,7 @@ export const LANGUAGES = {
   vi: { label: "Tiếng Việt", dict: vi, locale: "vi-VN" },
 };
 
-const DEFAULT_LANG = "en";
+const DEFAULT_LANG = "vi";
 const STORAGE_KEY = "secret-garden.lang";
 const listeners = new Set();
 
@@ -23,10 +23,9 @@ function detectInitialLang() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && LANGUAGES[saved]) return saved;
   } catch (e) {
-    // storage blocked (private mode, etc.) — fall through to browser/default
+    // storage blocked (private mode, etc.) — fall through to default
   }
-  const browserLang = (navigator.language || "").slice(0, 2);
-  return LANGUAGES[browserLang] ? browserLang : DEFAULT_LANG;
+  return DEFAULT_LANG;
 }
 
 let currentLang = detectInitialLang();

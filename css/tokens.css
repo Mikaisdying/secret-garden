@@ -8,8 +8,8 @@
 
 :root {
   /* --- Color: warm parchment content, jewel-toned chrome --- */
-  --ivory:        #fbf1da;   /* primary background, warm parchment */
-  --ivory-deep:    #f2e4bd;  /* secondary panels */
+  --ivory:        #f2f1ef;   /* primary background, warm parchment */
+  --ivory-deep:    #f2f1ef;  /* secondary panels */
   --paper-shadow: #d9bf85;   /* soft borders / recessed paper edges, gold-tinted */
   --sage:         #7fae86;   /* jewel-leaning sage green */
   --moss:         #3c7a5c;   /* deep emerald, Howard-Le/Genshin jewel green */

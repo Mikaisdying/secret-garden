@@ -9,13 +9,11 @@ export default {
     titleHome: "Secret Garden — a little place for flowers, memories, and words",
     titleGarden: "The Garden — Secret Garden",
     titlePlant: "Plant a Flower — Secret Garden",
-    titleAbout: "About — Secret Garden",
     description: "A digital garden where you can draw a flower, leave a message, and plant it for others to find.",
   },
   nav: {
     garden: "Garden",
     plant: "Plant a Flower",
-    about: "About",
   },
   landing: {
     title1: "Welcome to the",
@@ -94,12 +92,5 @@ export default {
     plantBtn: "Plant it",
     growTitle: "This one is planted.",
     growHint: "Taking you to the garden to see it grow…",
-  },
-  about: {
-    title: "A little place for flowers, memories, and words",
-    p1: "The Secret Garden began as a plain idea: that a message means more when someone takes the time to make something by hand before saying it. So instead of a comment box, there's a small patch of earth. You draw a flower — however simple — write a few honest words, and plant it somewhere in the garden for someone else to find.",
-    p2: "Nothing here is ranked, liked, or sorted by popularity. There's no feed. You simply wander the paths, and every so often, you come across something someone left behind. If you'd like, you can watch it grow again — stroke by stroke, exactly as it was first drawn.",
-    p3: "If you're building on top of this project: flowers are stored as vector stroke data rather than images, which is what makes the replay possible. See the README in this project for how to connect a real shared database so every visitor sees the same garden.",
-    signoff: "Someone cared enough to plant something here. Maybe you're next.",
   },
 };
