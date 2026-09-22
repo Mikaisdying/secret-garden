@@ -259,7 +259,10 @@ onLanguageChange(() => {
 
 document.getElementById("backTo4").addEventListener("click", () => goTo(4));
 
-document.getElementById("plantBtn").addEventListener("click", () => {
+document.getElementById("plantBtn").addEventListener("click", (e) => {
+  if (e.currentTarget.disabled) return;
+  e.currentTarget.disabled = true;
+
   const flower = addFlower({
     name: state.name,
     author: state.author,

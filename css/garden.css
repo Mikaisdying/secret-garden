@@ -2,11 +2,11 @@
   position: relative;
   width: 100%;
   height: 100vh;
-  height: 100svh; /* avoids mobile browser chrome cutting the scene off mid-flower */
+  height: 100svh;
   min-height: 520px;
   overflow: hidden;
-  touch-action: pan-y; /* flowers are tapped, not dragged — allow normal scroll gestures */
-  background: linear-gradient(180deg, #a9c08a 0%, #93a86e 55%, #83975e 100%);
+  touch-action: pan-y;
+  background: var(--lawn-gradient);
   transition: background var(--dur-slow) var(--ease-soft);
 }
 
@@ -21,23 +21,30 @@
   height: 100%;
 }
 
-.garden-scene__ground{ z-index: 3; }
-.garden-scene__plants{ z-index: 4; }
+.garden-scene__ground {
+  z-index: 3;
+}
+.garden-scene__plants {
+  z-index: 4;
+}
 
-/* --- Day/night tint: a soft wash over the painted scenery layers
-   only (fireflies and flowers sit above it and get their own
-   night treatment), faded in with the .is-night class. --- */
 .garden-scene__tint {
   z-index: 3;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(10, 14, 35, 0.38) 0%, rgba(18, 22, 46, 0.26) 55%, rgba(10, 14, 35, 0.12) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(10, 14, 35, 0.38) 0%,
+    rgba(18, 22, 46, 0.26) 55%,
+    rgba(10, 14, 35, 0.12) 100%
+  );
   mix-blend-mode: multiply;
   opacity: 0;
   transition: opacity var(--dur-slow) var(--ease-soft);
 }
-.garden-scene.is-night .garden-scene__tint { opacity: 1; }
+.garden-scene.is-night .garden-scene__tint {
+  opacity: 1;
+}
 
-/* --- Wind: leaves drifting across on breezy (daytime) visits --- */
 .wind-leaf {
   position: absolute;
   width: 9px;
@@ -49,41 +56,79 @@
   animation: wind-drift linear infinite;
 }
 @keyframes wind-drift {
-  0%   { opacity: 0; transform: translate(0, 0) rotate(0deg); }
-  8%   { opacity: 0.85; }
-  50%  { transform: translate(var(--wx, 60vw), var(--wy, 20px)) rotate(180deg); }
-  92%  { opacity: 0.6; }
-  100% { opacity: 0; transform: translate(var(--wx2, 110vw), var(--wy2, -10px)) rotate(360deg); }
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  8% {
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(var(--wx, 60vw), var(--wy, 20px)) rotate(180deg);
+  }
+  92% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--wx2, 110vw), var(--wy2, -10px)) rotate(360deg);
+  }
 }
-.garden-scene:not(.is-day) .wind-leaf { display: none; }
+.garden-scene:not(.is-day) .wind-leaf {
+  display: none;
+}
 
-/* --- Rain: falls in front of everything, including the flowers --- */
 .garden-scene__rain {
   z-index: 8;
   pointer-events: none;
 }
-.garden-scene:not(.is-rainy) .garden-scene__rain { display: none; }
+.garden-scene:not(.is-rainy) .garden-scene__rain {
+  display: none;
+}
 
 .rain-drop {
   position: absolute;
   top: -8%;
   width: 1.5px;
   height: 46px;
-  background: linear-gradient(180deg, rgba(210, 228, 238, 0) 0%, rgba(210, 228, 238, 0.55) 60%, rgba(210, 228, 238, 0.75) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(210, 228, 238, 0) 0%,
+    rgba(210, 228, 238, 0.55) 60%,
+    rgba(210, 228, 238, 0.75) 100%
+  );
   opacity: 0;
   animation: rain-fall linear infinite;
 }
 @keyframes rain-fall {
-  0%   { opacity: 0; transform: translate(0, 0); }
-  6%   { opacity: 0.8; }
-  95%  { opacity: 0.55; }
-  100% { opacity: 0; transform: translate(-40px, 118vh); }
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  6% {
+    opacity: 0.8;
+  }
+  95% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-40px, 118vh);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wind-leaf { animation: none; opacity: 0.5; }
-  .rain-drop { animation: none; opacity: 0; }
-  .garden-scene__rain { display: none; }
+  .wind-leaf {
+    animation: none;
+    opacity: 0.5;
+  }
+  .rain-drop {
+    animation: none;
+    opacity: 0;
+  }
+  .garden-scene__rain {
+    display: none;
+  }
 }
 
 .garden-plot {
@@ -93,60 +138,81 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: transform var(--dur-fast) var(--ease-soft), filter var(--dur-fast) var(--ease-soft);
+  transition:
+    transform var(--dur-fast) var(--ease-soft),
+    filter var(--dur-fast) var(--ease-soft);
   animation: flower-sway 6s ease-in-out infinite;
   animation-delay: var(--sway-delay, 0s);
-  filter: drop-shadow(0 3px 4px rgba(74,56,38,0.18));
+  filter: drop-shadow(0 3px 0 rgba(74, 56, 38, 0.18));
 }
 
 .garden-plot:hover,
 .garden-plot:focus-visible {
   transform: translate(-50%, -100%) scale(1.12);
-  filter: drop-shadow(0 4px 10px rgba(74,56,38,0.28)) drop-shadow(0 0 14px var(--glow-gold));
+  filter: drop-shadow(0 4px 0 rgba(74, 56, 38, 0.28))
+    drop-shadow(0 0 14px var(--glow-gold));
 }
 
 @keyframes flower-sway {
-  0%, 100% { rotate: calc(-1 * var(--sway-amp, 2deg)); }
-  50% { rotate: var(--sway-amp, 2deg); }
+  0%,
+  100% {
+    rotate: calc(-1 * var(--sway-amp, 2deg));
+  }
+  50% {
+    rotate: var(--sway-amp, 2deg);
+  }
 }
 
-/* Daytime: a livelier, wider sway to read as breeze. Only the amplitude
-   and duration change (via custom property + longhand), so the two-part
-   animation on a freshly-planted flower (grow-in, flower-sway) keeps both
-   parts instead of being collapsed to one by overriding animation-name. */
 .garden-scene.is-day .garden-plot {
   --sway-amp: 5deg;
   animation-duration: 3.2s;
 }
 
-/* Nighttime: dimmer petals lit by their own moonlit halo. */
 .garden-scene.is-night .garden-plot {
-  filter: brightness(0.82) drop-shadow(0 3px 4px rgba(0,0,0,0.35)) drop-shadow(0 0 12px rgba(255,224,138,0.85)) drop-shadow(0 0 26px rgba(255,224,138,0.5)) drop-shadow(0 0 40px rgba(125,211,224,0.35));
+  filter: brightness(0.82) drop-shadow(0 3px 0 rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 12px rgba(255, 224, 138, 0.85))
+    drop-shadow(0 0 26px rgba(255, 224, 138, 0.5))
+    drop-shadow(0 0 40px rgba(125, 211, 224, 0.35));
 }
 .garden-scene.is-night .garden-plot:hover,
 .garden-scene.is-night .garden-plot:focus-visible {
-  filter: brightness(0.95) drop-shadow(0 4px 10px rgba(0,0,0,0.4)) drop-shadow(0 0 16px rgba(255,224,138,1)) drop-shadow(0 0 32px rgba(255,224,138,0.6));
+  filter: brightness(0.95) drop-shadow(0 4px 0 rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 16px rgba(255, 224, 138, 1))
+    drop-shadow(0 0 32px rgba(255, 224, 138, 0.6));
 }
 
-/* Fireflies only make sense once it's dark. */
-.garden-scene:not(.is-night) #fireflyLayer .firefly { display: none; }
+.garden-scene:not(.is-night) #fireflyLayer .firefly {
+  display: none;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .garden-plot { animation: none; }
-  .garden-scene.is-day .garden-plot { animation: none; }
+  .garden-plot {
+    animation: none;
+  }
+  .garden-scene.is-day .garden-plot {
+    animation: none;
+  }
 }
 
 .garden-plot--new {
-  animation: grow-in 1.4s var(--ease-soft) both, flower-sway 6s ease-in-out 1.4s infinite;
+  animation:
+    grow-in 1.4s var(--ease-soft) both,
+    flower-sway 6s ease-in-out 1.4s infinite;
 }
 @keyframes grow-in {
-  0% { transform: translate(-50%, -20%) scale(0.15); opacity: 0; }
-  60% { opacity: 1; }
-  100% { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+  0% {
+    transform: translate(-50%, -20%) scale(0.15);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -100%) scale(1);
+    opacity: 1;
+  }
 }
 
-
-/* --- Flower detail: a panel that rises into the center of the screen --- */
 .detail-overlay {
   position: fixed;
   inset: 0;
@@ -160,11 +226,11 @@
   pointer-events: none;
   transition: opacity var(--dur-med) var(--ease-soft);
 }
-.detail-overlay.is-open { opacity: 1; pointer-events: auto; }
+.detail-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-/* No panel chrome here on purpose — the postage-stamp and polaroid cards
-   below are the only "surface" the user sees; the overlay just centers and
-   positions them. */
 .detail-panel {
   position: relative;
   width: min(820px, 92vw);
@@ -191,10 +257,6 @@
   z-index: 3;
 }
 
-/* --- Story stack: the postage-stamp message card and the polaroid photo
-   card overlap like two keepsakes dropped on a desk. Clicking either one
-   lifts it above the other, so both stay reachable without either being
-   permanently hidden underneath. --- */
 .story-stack {
   position: relative;
   width: 100%;
@@ -203,53 +265,68 @@
   transform: translateY(70px);
   transition: transform var(--dur-med) var(--ease-soft);
 }
-.detail-overlay.is-open .story-stack { transform: translateY(0); }
+.detail-overlay.is-open .story-stack {
+  transform: translateY(0);
+}
 
 .story-card {
   position: absolute;
   cursor: pointer;
   opacity: 0;
-  transition: transform var(--dur-med) var(--ease-soft),
-              box-shadow var(--dur-med) var(--ease-soft),
-              opacity var(--dur-med) var(--ease-soft);
+  transition:
+    transform var(--dur-med) var(--ease-soft),
+    box-shadow var(--dur-med) var(--ease-soft),
+    opacity var(--dur-med) var(--ease-soft);
 }
-.story-card:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 4px; }
+.story-card:focus-visible {
+  outline: 2px solid var(--gold-deep);
+  outline-offset: 4px;
+}
 
-/* Stamp rises first, polaroid follows just behind it, so the two cards
-   read as climbing up from below rather than popping in together. */
-.detail-overlay.is-open .story-card--stamp { opacity: 1; transition-delay: 0.05s; }
-.detail-overlay.is-open .story-card--polaroid { opacity: 1; transition-delay: 0.15s; }
+.detail-overlay.is-open .story-card--stamp {
+  opacity: 1;
+  transition-delay: 0.05s;
+}
+.detail-overlay.is-open .story-card--polaroid {
+  opacity: 1;
+  transition-delay: 0.15s;
+}
 
-.story-card.is-front { z-index: 2; }
-.story-card:not(.is-front) { z-index: 1; }
+.story-card.is-front {
+  z-index: 2;
+}
+.story-card:not(.is-front) {
+  z-index: 1;
+}
 
-/* Postage-stamp message card: name, meta, and the sealed/unsealed letter,
-   perched at a tilt like a stamp dropped on an envelope. */
 .story-card--stamp {
   left: 0;
   top: 50%;
   width: min(600px, 84%);
-  /* Matches the exact width:height ratio of the "Subtract" shape in
-     Figma's Frame 3 (707.0436754985712 x 541.7181613150751, confirmed
-     straight from the file) so the perforated edge never stretches out
-     of shape, no matter the card's size. Mobile switches to the "Android
-     Medium - 3" ratio further down (see the 640px media query). */
+  /* aspect ratio matches the stamp mask SVG so the perforated edge never stretches */
   aspect-ratio: 707.0436754985712 / 541.7181613150751;
-  box-shadow: var(--shadow-paper);
-  /* translateY(-50%) centers the card on the stack's vertical midpoint
-     regardless of its own height. The mask itself is drawn axis-aligned
-     (no baked-in rotation), so rotate() here turns the whole card as one
-     piece — border, text and shadow all tilt together and stay aligned. */
   transform: translateY(-50%) rotate(-4deg);
 }
-/* The masked, scalloped shape lives on this inner surface instead of on
-   .story-card--stamp itself — CSS mask clips box-shadow on whatever
-   element it's applied to, so keeping the shadow on the unmasked outer
-   card is what makes it survive the raised/glowing .is-front state. */
+/* Real masked element instead of box-shadow, so the shadow follows the perforated silhouette. */
+.story-card--stamp::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--paper-shadow);
+  -webkit-mask-image: url("../img/stamp-mask-landscape.svg");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: url("../img/stamp-mask-landscape.svg");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  transform: translate(0, 3px);
+  z-index: -1;
+}
 .story-card--stamp__surface {
   width: 100%;
   height: 100%;
   background: var(--ivory);
+  border: 1px solid var(--paper-shadow);
   padding: calc(var(--space-3) + 0.6rem);
   overflow-y: auto;
   scrollbar-width: none;
@@ -260,43 +337,53 @@
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
 }
-.story-card--stamp__surface::-webkit-scrollbar { display: none; }
+.story-card--stamp__surface::-webkit-scrollbar {
+  display: none;
+}
 .story-card--stamp.is-front {
   transform: translateY(calc(-50% - 6px)) rotate(-4deg) scale(1.02);
-  box-shadow: 0 16px 34px rgba(74,56,38,0.24), 0 0 20px var(--glow-gold);
+}
+/* filter, not box-shadow, so the glow traces the scalloped mask; must sit on the unmasked parent, not the masked surface */
+.story-card--stamp.is-front {
+  filter: drop-shadow(0 0 20px var(--glow-gold));
+}
+.story-card--stamp.is-front::before {
+  background: rgba(74, 56, 38, 0.3);
+  transform: translate(0, 16px);
 }
 
-/* Polaroid photo card: holds the drawing replay, tilted the other way for
-   a bit of keepsake charm. */
 .story-card--polaroid {
   right: 0;
   top: 50%;
   width: min(240px, 54%);
   background: var(--ivory);
   border: 1px solid var(--paper-shadow);
-  border-radius: 4px;
+  border-radius: 22px;
   padding: var(--space-2) var(--space-2) var(--space-3);
   box-shadow: var(--shadow-paper);
-  /* Same vertical-centering approach as the stamp card, so neither card's
-     dead space above/below biases the pair away from the stack's middle. */
   transform: translateY(-50%) rotate(15deg);
 }
 .story-card--polaroid.is-front {
   transform: translateY(calc(-50% - 6px)) rotate(15deg) scale(1.02);
-  box-shadow: 0 16px 34px rgba(74,56,38,0.3), 0 0 20px var(--glow-gold);
+  box-shadow:
+    0 16px 0 rgba(74, 56, 38, 0.3),
+    0 0 20px var(--glow-gold);
 }
 
 .detail-panel__canvas-wrap {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: var(--ivory-deep);
-  border-radius: 4px;
+  background: var(--lawn);
+  border-radius: 14px;
   margin-bottom: var(--space-2);
   display: grid;
   place-items: center;
   overflow: hidden;
 }
-.detail-panel__canvas-wrap svg { width: 82%; height: 82%; }
+.detail-panel__canvas-wrap svg {
+  width: 82%;
+  height: 82%;
+}
 
 .detail-panel__name {
   font-size: var(--step-display-m);
@@ -310,17 +397,23 @@
   margin-bottom: var(--space-2);
 }
 
-/* --- The message, presented as a little folded letter. Only ever shown
-   for a letter the viewer is allowed to read — a private one shows the
-   envelope below instead of this. --- */
 .detail-panel__letter {
   position: relative;
+  z-index: 0;
   background: var(--ivory-deep);
-  border: 1px solid var(--paper-shadow);
+  border: 3px solid var(--paper-shadow);
   border-radius: 4px 4px 12px 12px;
   padding: var(--space-3);
-  box-shadow: var(--shadow-paper);
   transform: rotate(-0.4deg);
+}
+.detail-panel__letter::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--paper-shadow);
+  border-radius: inherit;
+  transform: translate(4px, 4px);
+  z-index: -1;
 }
 .detail-panel__letter::before {
   content: "";
@@ -329,7 +422,12 @@
   right: var(--space-3);
   top: 30%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--paper-shadow), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--paper-shadow),
+    transparent
+  );
   opacity: 0.6;
 }
 
@@ -344,8 +442,6 @@
   padding-left: var(--space-3);
 }
 
-/* --- Sealed envelope: what a private letter shows instead of the story
-   stack — just the envelope and its wax seal, nothing openable. --- */
 .story-envelope {
   position: relative;
   width: 100%;
@@ -358,9 +454,14 @@
   overflow: hidden;
   opacity: 0;
   transform: translateY(24px) scale(0.97);
-  transition: transform var(--dur-med) var(--ease-soft), opacity var(--dur-med) var(--ease-soft);
+  transition:
+    transform var(--dur-med) var(--ease-soft),
+    opacity var(--dur-med) var(--ease-soft);
 }
-.detail-overlay.is-open .story-envelope { opacity: 1; transform: translateY(0) scale(1); }
+.detail-overlay.is-open .story-envelope {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 
 .story-envelope__flap {
   position: absolute;
@@ -370,7 +471,9 @@
   height: 58%;
   display: block;
 }
-.story-envelope__flap-fill { fill: var(--ivory-deep); }
+.story-envelope__flap-fill {
+  fill: var(--ivory-deep);
+}
 .story-envelope__flap-line {
   fill: none;
   stroke: var(--gold-deep);
@@ -411,9 +514,13 @@
   width: 76px;
   height: 76px;
   transform: translate(-50%, -50%);
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.3));
 }
-.story-envelope__seal .wax-seal { display: block; width: 100%; height: 100%; }
+.story-envelope__seal .wax-seal {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
 .story-envelope__note {
   position: absolute;
@@ -446,28 +553,197 @@
   pointer-events: none;
 }
 
+/* grid, not flex — keeps the middle column centered regardless of the side buttons' widths */
 .detail-panel__controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
+}
+.detail-panel__controls > .speed-dropdown {
+  justify-self: end;
+}
+.detail-panel__controls > #replayAgain {
+  justify-self: start;
 }
 
-.speed-select {
-  font-family: var(--font-body);
-  border: 1px solid var(--paper-shadow);
-  background: var(--ivory-deep);
+/* hand-rolled listbox, not a native <select>, so it tilts along with the polaroid card */
+.speed-dropdown {
+  position: relative;
+}
+.speed-dropdown__trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--btn-font);
+  font-weight: 700;
+  color: var(--btn-ink-soft);
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 0.5rem 1.9rem 0.5rem 0.9rem;
+  box-shadow: none;
+  cursor: pointer;
+}
+.speed-dropdown__trigger:hover {
+  background: var(--btn-cream) var(--btn-chevron) right 0.7rem center / 0.75rem
+    no-repeat;
+  border-color: var(--btn-tan);
+  box-shadow: 0 2px 0 var(--btn-tan-dark);
+}
+.speed-dropdown__trigger:focus-visible {
+  background: var(--btn-cream) var(--btn-chevron) right 0.7rem center / 0.75rem
+    no-repeat;
+  border-color: var(--btn-tan);
+  box-shadow: 0 2px 0 var(--btn-tan-dark);
+}
+.speed-dropdown__trigger[aria-expanded="true"] {
+  background: var(--btn-cream) var(--btn-chevron) right 0.7rem center / 0.75rem
+    no-repeat;
+  border-color: var(--btn-tan);
+  border-bottom-color: transparent;
+  border-radius: 14px 14px 0 0;
+  box-shadow: none;
+}
+
+.speed-dropdown__list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0.3rem;
+  width: 100%;
+  background: var(--btn-cream);
+  border: 2px solid var(--btn-tan);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  box-shadow: var(--shadow-paper);
+  z-index: 5;
+}
+.speed-dropdown__list[hidden] {
+  display: none;
+}
+.speed-dropdown__list li {
+  font-family: var(--btn-font);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--btn-ink-soft);
+  text-align: center;
+  padding: 0.3rem 0.4rem;
   border-radius: 999px;
-  padding: 0.5rem 0.8rem;
-  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.speed-dropdown__list li:hover {
+  background: var(--btn-cream-hover);
+  color: var(--btn-ink);
+}
+.speed-dropdown__list li[aria-selected="true"] {
+  background: var(--btn-cream-press);
+  color: var(--btn-ink);
 }
 
-.icon-btn--sm { width: 34px; height: 34px; font-size: 0.85rem; }
-.speed-select--sm { padding: 0.35rem 0.6rem; font-size: 0.82rem; }
+.icon-btn--sm {
+  width: 34px;
+  height: 34px;
+  font-size: 0.85rem;
+}
+
+#replayToggle {
+  background:
+    var(--btn-grass) center / cover no-repeat,
+    radial-gradient(
+      circle at 35% 30%,
+      var(--btn-moss-hover) 0%,
+      var(--btn-moss) 100%
+    );
+  border-color: var(--btn-moss-dark);
+  color: #fffdf3;
+  box-shadow: 0 3px 0 var(--btn-moss-dark);
+}
+#replayToggle:hover {
+  background:
+    var(--btn-grass) center / cover no-repeat,
+    radial-gradient(
+      circle at 35% 30%,
+      var(--btn-moss-hover) 0%,
+      var(--btn-moss-hover) 100%
+    );
+  color: #fffdf3;
+}
+#replayToggle:active {
+  box-shadow:
+    0 1px 0 var(--btn-moss-dark),
+    inset 0 3px 6px rgba(35, 45, 15, 0.3);
+}
+
+#replayAgain {
+  width: 50px;
+  height: 50px;
+  font-family: var(--btn-font);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-left: 0.35rem;
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+  transition: transform var(--dur-fast) var(--ease-soft);
+}
+#replayAgain:hover {
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--btn-cream-hover) 0%,
+    var(--btn-cream) 100%
+  );
+  border-color: var(--btn-tan);
+  box-shadow: 0 3px 0 var(--btn-tan-dark);
+}
+#replayAgain:focus-visible {
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--btn-cream-hover) 0%,
+    var(--btn-cream) 100%
+  );
+  border-color: var(--btn-tan);
+  box-shadow: 0 3px 0 var(--btn-tan-dark);
+}
+#replayAgain:active {
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--btn-cream-hover) 0%,
+    var(--btn-cream) 100%
+  );
+  border-color: var(--btn-tan);
+  box-shadow:
+    0 1px 0 var(--btn-tan-dark),
+    inset 0 3px 6px rgba(90, 60, 20, 0.25);
+}
+
+/* Sized down and squared off to sit level with the 34px restart button
+   instead of towering over it as a full-height pill. Fixed width (not
+   left to shrink-to-fit around whichever speed happens to be showing)
+   so the trigger doesn't resize as the selection changes, and so the
+   list below — set to width: 100% of this same wrapper — always lines
+   up with it exactly instead of drifting wider or narrower. */
+.speed-dropdown--sm {
+  width: 62px;
+}
+.speed-dropdown--sm .speed-dropdown__trigger {
+  width: 100%;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 1.3rem 0 0.55rem;
+  background-position: right 0.5rem center;
+  background-size: 0.6rem;
+  font-size: 0.78rem;
+}
 
 @media (max-width: 640px) {
-  .detail-overlay { padding: 0; }
+  .detail-overlay {
+    padding: 0;
+  }
   .detail-panel {
     width: 100%;
     height: 100%;
@@ -483,24 +759,53 @@
      polaroid becomes the dominant card (bigger, lower, centered-right) and
      the stamp shrinks to a peek in the upper-left corner behind it, instead
      of the desktop balance where the stamp leads. */
-  .story-stack { height: clamp(430px, 118vw, 520px); margin-top: var(--space-3); }
+  .story-stack {
+    height: clamp(430px, 118vw, 520px);
+    margin-top: var(--space-3);
+  }
   /* Switches to the exact "Android Medium - 3" ratio confirmed from Figma
      (348.2365483188478 x 454.3117986616853) and the portrait mask asset —
      the letter stands upright on a phone screen instead of lying on its
      side the way it does on desktop. Sized generously and padded less so
      the title/message don't wrap onto cramped half-lines. */
   /* Same axis-aligned mask + single rotate() as desktop, at its own angle. */
-  .story-card--stamp { width: min(300px, 84%); aspect-ratio: 348.2365483188478 / 454.3117986616853; left: 0; top: 2%; transform: rotate(-6deg); }
+  .story-card--stamp {
+    width: min(300px, 84%);
+    aspect-ratio: 348.2365483188478 / 454.3117986616853;
+    left: 0;
+    top: 2%;
+    transform: rotate(-6deg);
+  }
+  .story-card--stamp::before {
+    -webkit-mask-image: url("../img/stamp-mask.svg");
+    mask-image: url("../img/stamp-mask.svg");
+  }
   .story-card--stamp__surface {
     padding: calc(var(--space-2) + 0.3rem);
     -webkit-mask-image: url("../img/stamp-mask.svg");
     mask-image: url("../img/stamp-mask.svg");
   }
-  .story-card--stamp.is-front { transform: rotate(-6deg) translateY(-6px) scale(1.02); }
-  .story-card--polaroid { width: min(230px, 62%); left: auto; right: 0; top: 40%; transform: rotate(8deg); }
-  .story-card--polaroid.is-front { transform: rotate(8deg) translateY(-6px) scale(1.02); }
-  .story-envelope { height: clamp(260px, 90vw, 340px); margin-top: var(--space-3); }
-  .detail-panel__message { font-size: 1.1rem; }
-  .detail-panel__controls { justify-content: center; }
-  .speed-select { padding: 0.6rem 0.8rem; }
+  .story-card--stamp.is-front {
+    transform: rotate(-6deg) translateY(-6px) scale(1.02);
+  }
+  .story-card--polaroid {
+    width: min(230px, 62%);
+    left: auto;
+    right: 0;
+    top: 40%;
+    transform: rotate(8deg);
+  }
+  .story-card--polaroid.is-front {
+    transform: rotate(8deg) translateY(-6px) scale(1.02);
+  }
+  .story-envelope {
+    height: clamp(260px, 90vw, 340px);
+    margin-top: var(--space-3);
+  }
+  .detail-panel__message {
+    font-size: 1.1rem;
+  }
+  .speed-dropdown--sm .speed-dropdown__trigger {
+    padding: 0.6rem 1.9rem 0.6rem 0.9rem;
+  }
 }

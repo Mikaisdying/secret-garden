@@ -4,9 +4,9 @@ export default {
     language: "Ngôn ngữ",
   },
   meta: {
-    titleHome: "Khu Vườn Bí Mật — một nơi nhỏ cho hoa, kỷ niệm và lời nhắn",
-    titleGarden: "Khu Vườn — Khu Vườn Bí Mật",
-    titlePlant: "Trồng Một Bông Hoa — Khu Vườn Bí Mật",
+    titleHome: "Khu Vườn Bí Mật - một nơi nhỏ cho hoa, kỷ niệm và lời nhắn",
+    titleGarden: "Khu Vườn - Khu Vườn Bí Mật",
+    titlePlant: "Trồng Một Bông Hoa - Khu Vườn Bí Mật",
     description: "Một khu vườn số nơi bạn có thể vẽ một bông hoa, để lại một lời nhắn, và trồng nó cho người khác tìm thấy.",
   },
   nav: {
@@ -26,9 +26,6 @@ export default {
     replayPause: "Tạm dừng",
     replayAgain: "Phát lại từ đầu",
     speedLabel: "Tốc độ vẽ",
-    speedSlow: "Chậm",
-    speedNormal: "Bình thường",
-    speedFast: "Nhanh",
     flowerAria: "{name}, được trồng bởi {author}",
     flowerAriaSealed: "{name}, một bức thư được niêm phong từ {author}",
     plantedBy: "Được trồng bởi {author} · {date}",
@@ -90,12 +87,5 @@ export default {
     plantBtn: "Trồng nó",
     growTitle: "Bông hoa này đã được trồng.",
     growHint: "Đang đưa bạn đến khu vườn để xem nó lớn lên…",
-  },
-  about: {
-    title: "Một nơi nhỏ bé dành cho hoa, kỷ niệm, và những lời",
-    p1: "Khu Vườn Bí Mật bắt đầu từ một ý tưởng giản dị: một lời nhắn sẽ có ý nghĩa hơn khi ai đó dành thời gian làm ra điều gì đó bằng tay trước khi nói ra. Vì vậy, thay vì một ô bình luận, nơi đây có một mảnh đất nhỏ. Bạn vẽ một bông hoa — dù đơn giản đến đâu — viết vài lời chân thành, và trồng nó ở đâu đó trong khu vườn để người khác tìm thấy.",
-    p2: "Không có gì ở đây được xếp hạng, thích, hay sắp xếp theo độ nổi tiếng. Không có bảng tin. Bạn chỉ đơn giản dạo quanh những lối đi, và thỉnh thoảng, bạn sẽ bắt gặp điều gì đó ai đó đã để lại. Nếu muốn, bạn có thể xem nó lớn lên một lần nữa — từng nét vẽ một, đúng như lúc nó được vẽ lần đầu.",
-    p3: "Nếu bạn đang xây dựng dựa trên dự án này: hoa được lưu trữ dưới dạng dữ liệu nét vẽ (vector) thay vì hình ảnh, đó là điều giúp việc phát lại trở nên khả thi. Xem tệp README trong dự án này để biết cách kết nối một cơ sở dữ liệu chia sẻ thực sự để mọi khách ghé thăm đều thấy cùng một khu vườn.",
-    signoff: "Ai đó đã đủ quan tâm để trồng điều gì đó nơi đây. Có thể bạn sẽ là người tiếp theo.",
   },
 };

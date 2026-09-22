@@ -11,6 +11,8 @@
 </head>
 <body>
 
+<span class="lang-switcher-fab" data-lang-switcher></span>
+
 <a class="shovel-fab" href="plant.html" aria-label="Plant a Flower" data-i18n-aria-label="landing.ctaPlant" title="Plant a Flower" data-i18n-title="landing.ctaPlant">
   <svg viewBox="0 0 200 400" fill="none" aria-hidden="true">
     <defs>
@@ -76,13 +78,19 @@
           <svg id="replaySvg" viewBox="0 0 120 120"></svg>
         </div>
         <div class="detail-panel__controls">
+          <div class="speed-dropdown speed-dropdown--sm" id="speedDropdown">
+            <button type="button" class="speed-dropdown__trigger" id="speedDropdownTrigger"
+                    aria-haspopup="listbox" aria-expanded="false" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
+              <span id="speedDropdownValue">1.0x</span>
+            </button>
+            <ul class="speed-dropdown__list" id="speedDropdownList" role="listbox" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel" hidden>
+              <li role="option" data-value="0.5">0.5x</li>
+              <li role="option" data-value="1" aria-selected="true">1.0x</li>
+              <li role="option" data-value="2">2x</li>
+            </ul>
+          </div>
           <button class="icon-btn icon-btn--sm" id="replayToggle" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
           <button class="icon-btn icon-btn--sm" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
-          <select class="speed-select speed-select--sm" id="replaySpeed" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
-            <option value="0.5" data-i18n="garden.speedSlow">Slow</option>
-            <option value="1" selected data-i18n="garden.speedNormal">Normal</option>
-            <option value="2" data-i18n="garden.speedFast">Fast</option>
-          </select>
         </div>
       </div>
     </div>

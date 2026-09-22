@@ -5,6 +5,8 @@ import { initEnvironment } from "./environment.js";
 import { sealSvgMarkup } from "./seals.js";
 import { canOpenPrivateLetters } from "./access.js";
 
+document.body.addEventListener("touchstart", () => {}, { passive: true });
+
 const plantLayer = document.getElementById("plantLayer");
 const params = new URLSearchParams(location.search);
 const justPlantedId = params.get("planted");
@@ -22,19 +24,29 @@ function paintScenery() {
   if (grass) {
     const rg = seededRandom(21);
     const leafColors = ["#5f7a45", "#6f8f52", "#7a9b5e"];
-    const fanAngles = { 1: [0], 2: [-14, 14], 3: [-18, 0, 18] };
-    const fanSpread = { 1: [0], 2: [-9, 9], 3: [-16, 0, 16] };
+    const fanAngles = { 1: [0], 2: [-10, 10], 3: [-13, 0, 13] };
+    const fanSpread = { 1: [0], 2: [-4, 4], 3: [-7, 0, 7] };
     const totalBlades = 220;
+    const minClusterDist = 32;
+    const placedCenters = [];
     let planted = 0;
-    while (planted < totalBlades) {
-      const clusterSize = 1 + Math.floor(rg() * 3);
+    let guard = 0;
+    while (planted < totalBlades && guard < totalBlades * 40) {
+      guard++;
       const cx = rg() * 1440;
       const cy = rg() * 900;
+      const tooClose = placedCenters.some(
+        (p) => Math.hypot(p.x - cx, p.y - cy) < minClusterDist
+      );
+      if (tooClose) continue;
+      placedCenters.push({ x: cx, y: cy });
+
+      const clusterSize = 1 + Math.floor(rg() * 3);
       const angles = fanAngles[clusterSize];
       const spread = fanSpread[clusterSize];
       for (let j = 0; j < clusterSize && planted < totalBlades; j++) {
         const len = 10 + rg() * 6;
-        const width = len * 0.32;
+        const width = len * 0.5;
         const angle = angles[j];
         const bx = cx + spread[j];
         const color = leafColors[Math.floor(rg() * leafColors.length)];
@@ -44,7 +56,7 @@ function paintScenery() {
           `M0,0 C${width},${-len * 0.4} ${width * 0.6},${-len * 0.85} 0,${-len} C${-width * 0.2},${-len * 0.85} ${-width * 0.1},${-len * 0.4} 0,0 Z`
         );
         blade.setAttribute("fill", color);
-        blade.setAttribute("opacity", "0.55");
+        blade.setAttribute("opacity", "0.65");
         blade.setAttribute("transform", `translate(${bx},${cy}) rotate(${angle})`);
         grass.appendChild(blade);
         planted++;
@@ -240,9 +252,13 @@ function closeDetail() {
   overlay.classList.remove("is-open");
   player?.pause();
   setReplayToggleState(false);
+  closeSpeedDropdown();
 }
 
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeDetail(); });
+// On mobile the panel stretches to fill the overlay, so its empty background
+// (not the story card/envelope itself) is the only "outside" a tap can hit.
+detailPanel.addEventListener("click", (e) => { if (e.target === detailPanel) closeDetail(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
 
 replayToggle.addEventListener("click", () => {
@@ -252,12 +268,44 @@ replayToggle.addEventListener("click", () => {
   else player.pause();
   setReplayToggleState(willPlay);
 });
-document.getElementById("replayAgain").addEventListener("click", () => {
+const replayAgain = document.getElementById("replayAgain");
+replayAgain.addEventListener("click", () => {
   player?.replay();
   setReplayToggleState(true);
 });
-document.getElementById("replaySpeed").addEventListener("change", (e) => {
-  player?.setSpeed(parseFloat(e.target.value));
+const speedDropdown = document.getElementById("speedDropdown");
+const speedTrigger = document.getElementById("speedDropdownTrigger");
+const speedValue = document.getElementById("speedDropdownValue");
+const speedList = document.getElementById("speedDropdownList");
+const speedOptions = Array.from(speedList.querySelectorAll("li"));
+
+function closeSpeedDropdown() {
+  speedList.hidden = true;
+  speedTrigger.setAttribute("aria-expanded", "false");
+}
+speedTrigger.addEventListener("click", () => {
+  const willOpen = speedList.hidden;
+  speedList.hidden = !willOpen;
+  speedTrigger.setAttribute("aria-expanded", String(willOpen));
+});
+speedOptions.forEach((li) => {
+  li.addEventListener("click", () => {
+    speedOptions.forEach((o) => o.setAttribute("aria-selected", String(o === li)));
+    speedValue.textContent = li.textContent;
+    player?.setSpeed(parseFloat(li.dataset.value));
+    closeSpeedDropdown();
+    speedTrigger.focus();
+  });
+});
+document.addEventListener("click", (e) => {
+  if (!speedDropdown.contains(e.target)) closeSpeedDropdown();
+});
+speedDropdown.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !speedList.hidden) {
+    e.stopPropagation();
+    closeSpeedDropdown();
+    speedTrigger.focus();
+  }
 });
 
 initI18n();
@@ -293,4 +341,7 @@ if (canOpenPrivateLetters()) {
 if (justPlantedId) {
   const planted = getFlowers().find((f) => f.id === justPlantedId);
   if (planted) setTimeout(() => openDetail(planted), 900);
+  params.delete("planted");
+  const cleanQuery = params.toString();
+  history.replaceState(null, "", location.pathname + (cleanQuery ? `?${cleanQuery}` : "") + location.hash);
 }

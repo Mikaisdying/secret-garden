@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap');
 
 * { box-sizing: border-box; }
 
@@ -12,17 +13,14 @@ body {
   font-size: var(--step-body);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent; /* no grey flash on tap, we show our own hover/active states */
-  overflow-x: hidden; /* the illustrated layers occasionally bleed a fraction past 100%; this keeps phones from gaining a horizontal scrollbar */
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
 }
 
 button, a.btn {
-  touch-action: manipulation; /* removes the ~300ms tap delay on older mobile browsers */
+  touch-action: manipulation;
 }
 
-/* Anchors are reset to plain text by default; only .link (or a component
-   like .btn) opts back into an underline, so no <a> shows one unless
-   we explicitly ask for it. */
 a {
   color: inherit;
   text-decoration: none;
@@ -33,25 +31,24 @@ a {
   text-underline-offset: 0.15em;
 }
 
-/* --- Icon button: used by the replay controls (garden.html) and the
-   drawing toolbar (plant.html). Defined once here, shared by both,
-   instead of redefined per-page. --- */
 .icon-btn {
-  border: 1px solid var(--paper-shadow);
-  background: var(--ivory-deep);
+  border: 2px solid var(--btn-tan);
+  background: radial-gradient(circle at 35% 30%, var(--btn-cream-hover) 0%, var(--btn-cream) 100%);
   border-radius: 999px;
   width: 44px;
   height: 44px;
   display: grid;
   place-items: center;
-  color: var(--ink);
+  color: var(--btn-ink-soft);
   font-size: 1rem;
   line-height: 1;
   touch-action: manipulation;
-  transition: background var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+  box-shadow: 0 3px 0 var(--btn-tan-dark);
+  transition: transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft), background var(--dur-fast) var(--ease-soft), color var(--dur-fast) var(--ease-soft);
 }
-.icon-btn:hover { background: var(--gold); color: #3a2708; box-shadow: 0 0 12px var(--glow-gold); }
-.icon-btn.is-selected { background: var(--moss); color: var(--ivory); box-shadow: 0 0 12px var(--glow-teal); }
+.icon-btn:hover { transform: translateY(-1px); color: var(--btn-ink); background: var(--btn-cream-hover); }
+.icon-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-tan-dark), inset 0 3px 6px rgba(90, 60, 20, 0.25); }
+.icon-btn.is-selected { background: var(--btn-moss); border-color: var(--btn-moss-dark); color: #fffdf3; box-shadow: 0 3px 0 var(--btn-moss-dark); }
 
 /* faint paper grain, everywhere */
 body::before {
@@ -88,50 +85,59 @@ button {
   border-radius: 4px;
 }
 
-/* --- Buttons: gacha-gold frame + a Howard-Le style light sweep on hover --- */
 .btn {
-  position: relative;
-  overflow: hidden;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  border: 1px solid var(--gold-deep);
-  background: transparent;
-  color: var(--ink);
-  text-decoration: none;
-  padding: 0.7rem 1.6rem;
-  border-radius: 3px 14px 3px 14px;
-  isolation: isolate;
-  transition: transform var(--dur-fast) var(--ease-soft), background var(--dur-fast) var(--ease-soft), color var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
-}
-.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(169, 113, 31, 0.28); }
+  --btn-bg: var(--btn-moss);
+  --btn-bg-hover: var(--btn-moss-hover);
+  --btn-bg-press: var(--btn-moss-press);
+  --btn-bd: var(--btn-moss-dark);
+  --btn-fg: #fffdf3;
 
-/* the light sweep: a skewed gold band that travels across on hover */
-.btn::before {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-family: var(--btn-font);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  border: 2px solid var(--btn-bd);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  text-decoration: none;
+  padding: 0.75em 1.7em;
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  box-shadow: 0 3px 0 var(--btn-bd), inset 0 2px 0 rgba(255, 255, 255, 0.28);
+  transition: transform var(--dur-fast) var(--ease-soft), background var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.btn:hover { background: var(--btn-bg-hover); transform: translateY(-1px); box-shadow: 0 4px 0 var(--btn-bd), inset 0 2px 0 rgba(255, 255, 255, 0.3); }
+.btn:active { background: var(--btn-bg-press); transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-bd), inset 0 3px 5px rgba(0, 0, 0, 0.22); }
+
+.btn--primary::after {
   content: "";
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%);
-  transform: translateX(-120%);
-  transition: transform 0.65s var(--ease-soft);
+  right: 0.55em;
+  bottom: -0.5em;
+  width: 1.1em;
+  height: 1.1em;
+  background: var(--btn-daisy) center / contain no-repeat;
+  filter: drop-shadow(0 1px 0 rgba(60, 40, 10, 0.3));
+  pointer-events: none;
 }
-.btn:hover::before { transform: translateX(120%); }
 
-.btn--primary {
-  background: var(--gem-gradient);
-  border-color: var(--gold-deep);
-  color: #3a2708;
-  box-shadow: var(--shadow-glow);
+.btn--ghost {
+  --btn-bg: var(--btn-cream);
+  --btn-bg-hover: var(--btn-cream-hover);
+  --btn-bg-press: var(--btn-cream-press);
+  --btn-bd: var(--btn-tan);
+  --btn-fg: var(--btn-ink);
 }
-.btn--primary:hover { box-shadow: 0 0 24px var(--glow-gold), 0 6px 16px rgba(0, 0, 0, 0.3); }
 
-.btn--ghost { color: var(--ink); }
-.btn--ghost:hover { background: rgba(240, 185, 62, 0.12); }
+.btn:disabled { opacity: 0.45; filter: saturate(0.6); cursor: not-allowed; transform: none; box-shadow: 0 3px 0 var(--btn-bd), inset 0 2px 0 rgba(255, 255, 255, 0.28); }
 
-.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-.btn:disabled::before { display: none; }
-
-/* --- Firefly / particle layer, reused across pages --- */
 .firefly {
   position: absolute;
   width: 5px;
@@ -155,8 +161,6 @@ button {
   .firefly { animation: none; opacity: 0.6; }
 }
 
-/* --- Shovel FAB: a shovel leaning against the screen's bottom-right
-   corner, used on any page in place of a text CTA. --- */
 .shovel-fab {
   position: fixed;
   right: var(--space-3);
@@ -166,7 +170,7 @@ button {
   height: 230px;
   display: block;
   transform-origin: bottom center;
-  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.35));
   transition: transform var(--dur-fast) var(--ease-soft), filter var(--dur-fast) var(--ease-soft);
 }
 
@@ -179,11 +183,123 @@ button {
 .shovel-fab:hover,
 .shovel-fab:focus-visible {
   transform: translateY(-8px) rotate(-3deg);
-  filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 16px var(--glow-gold));
+  filter: drop-shadow(0 12px 0 rgba(0, 0, 0, 0.4)) drop-shadow(0 0 16px var(--glow-gold));
 }
 
 @media (max-width: 640px) {
   .shovel-fab { width: 68px; height: 156px; right: var(--space-2); }
+}
+
+.lang-switcher-fab {
+  position: fixed;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: var(--z-nav);
+}
+@media (max-width: 640px) {
+  .lang-switcher-fab { top: var(--space-2); right: var(--space-2); }
+}
+
+.lang-dropdown {
+  --chain-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 12'%3E%3Cellipse cx='5' cy='6' rx='3.4' ry='5' fill='none' stroke='%237c828a' stroke-width='2.1'/%3E%3Cellipse cx='4.3' cy='4.8' rx='1.5' ry='2.6' fill='none' stroke='%23e4e8eb' stroke-width='.8'/%3E%3C/svg%3E");
+  position: relative;
+  display: inline-block;
+  min-width: 8.5rem;
+}
+
+.lang-dropdown::before,
+.lang-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  width: 10px;
+  height: 24px;
+  background: var(--chain-link) repeat-y;
+  background-size: 10px 12px;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25));
+  transform-origin: top center;
+  transform: scaleY(0);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9;
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+.lang-dropdown::before { left: 14px; }
+.lang-dropdown::after { right: 14px; }
+.lang-dropdown.is-open::before,
+.lang-dropdown.is-open::after { transform: scaleY(1); opacity: 1; }
+
+.lang-dropdown__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--btn-font);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--btn-ink-soft);
+  background: var(--btn-cream);
+  border: 2px solid var(--btn-tan);
+  border-radius: 10px;
+  padding: 0.5rem 0.9rem;
+  box-shadow: 0 3px 0 var(--btn-tan-dark), inset 0 2px 0 rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-soft), transform var(--dur-fast) var(--ease-soft), box-shadow var(--dur-fast) var(--ease-soft);
+}
+.lang-dropdown__btn::after {
+  content: "";
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  background: var(--btn-chevron) center / contain no-repeat;
+  transition: transform var(--dur-fast) var(--ease-soft);
+}
+.lang-dropdown__btn:hover { transform: translateY(-2px) rotate(-0.6deg); }
+.lang-dropdown__btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-tan-dark), inset 0 3px 6px rgba(90, 60, 20, 0.25); }
+.lang-dropdown.is-open .lang-dropdown__btn {
+  transform: none;
+  transition: border-color var(--dur-fast) var(--ease-soft);
+}
+.lang-dropdown.is-open .lang-dropdown__btn::after { transform: rotate(180deg); }
+
+.lang-dropdown__list {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  top: calc(100% + 24px);
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  background: var(--btn-cream);
+  border: 2px solid var(--btn-tan-dark);
+  border-radius: 10px;
+  box-shadow: 0 8px 0 rgba(107, 76, 51, 0.18);
+  transform-origin: top center;
+  transform: scaleY(0);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+.lang-dropdown.is-open .lang-dropdown__list { transform: scaleY(1); opacity: 1; pointer-events: auto; }
+
+.lang-dropdown__item {
+  padding: 0.5rem 0.65rem;
+  font-family: var(--btn-font);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--btn-ink);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-soft);
+}
+.lang-dropdown__item:hover,
+.lang-dropdown__item.is-active,
+.lang-dropdown__item[aria-selected="true"] { background: #e6efcf; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-dropdown::before, .lang-dropdown::after, .lang-dropdown__list, .lang-dropdown__btn { transition: none; }
 }
 
 .visually-hidden {

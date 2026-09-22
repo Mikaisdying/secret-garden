@@ -36,10 +36,9 @@ secret-garden/
 ├── index.html            Landing / welcome screen (the hero scene)
 ├── garden.html            The shared garden — explore & discover flowers
 ├── plant.html              The 5-step "plant a flower" flow
-├── about.html               Short lore / explanation page
 ├── css/
 │   ├── tokens.css              Design tokens: color, type scale, spacing, motion
-│   ├── base.css                  Global resets, nav, buttons, fireflies
+│   ├── base.css                  Global resets, buttons, fireflies
 │   ├── landing.css                Hero scene layout & illustration layers
 │   ├── garden.css                  Garden scene, flower plots, detail panel
 │   └── plant.css                    Step wizard, drawing toolbar, preview card
