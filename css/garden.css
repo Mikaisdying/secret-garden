@@ -688,7 +688,6 @@
   background: none;
   border-color: transparent;
   box-shadow: none;
-  transition: transform var(--dur-fast) var(--ease-soft);
 }
 #replayAgain:hover {
   background: radial-gradient(
@@ -698,6 +697,7 @@
   );
   border-color: var(--btn-tan);
   box-shadow: 0 3px 0 var(--btn-tan-dark);
+  transform: none;
 }
 #replayAgain:focus-visible {
   background: radial-gradient(
@@ -707,6 +707,7 @@
   );
   border-color: var(--btn-tan);
   box-shadow: 0 3px 0 var(--btn-tan-dark);
+  transform: none;
 }
 #replayAgain:active {
   background: radial-gradient(
@@ -715,6 +716,7 @@
     var(--btn-cream) 100%
   );
   border-color: var(--btn-tan);
+  transform: none;
   box-shadow:
     0 1px 0 var(--btn-tan-dark),
     inset 0 3px 6px rgba(90, 60, 20, 0.25);
