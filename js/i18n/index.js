@@ -87,6 +87,9 @@ function applyTranslations() {
   document.querySelectorAll("[data-i18n-title]").forEach((el) => {
     el.setAttribute("title", t(el.dataset.i18nTitle));
   });
+  document.querySelectorAll("[data-i18n-tooltip]").forEach((el) => {
+    el.setAttribute("data-tooltip", t(el.dataset.i18nTooltip));
+  });
   document.querySelectorAll("[data-i18n-content]").forEach((el) => {
     el.setAttribute("content", t(el.dataset.i18nContent));
   });

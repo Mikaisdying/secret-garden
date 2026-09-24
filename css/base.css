@@ -50,6 +50,61 @@ a {
 .icon-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-tan-dark), inset 0 3px 6px rgba(90, 60, 20, 0.25); }
 .icon-btn.is-selected { background: var(--btn-moss); border-color: var(--btn-moss-dark); color: #fffdf3; box-shadow: 0 3px 0 var(--btn-moss-dark); }
 
+.has-tooltip { position: relative; }
+.has-tooltip::before,
+.has-tooltip::after {
+  position: absolute;
+  left: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-soft), transform var(--dur-fast) var(--ease-soft);
+  z-index: 10;
+}
+.has-tooltip::after {
+  content: attr(aria-label);
+  bottom: calc(100% + 11px);
+  transform: translate(-50%, 4px);
+  padding: 0.45rem 0.95rem;
+  font-family: var(--btn-font);
+  font-weight: 800;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--btn-cream);
+  background: radial-gradient(circle at 35% 25%, var(--btn-moss-hover) 0%, var(--btn-moss) 100%);
+  border: 2px solid var(--btn-moss-dark);
+  border-radius: 14px;
+  box-shadow: 0 3px 0 var(--btn-moss-dark), 0 6px 14px rgba(35, 45, 15, 0.25);
+  text-shadow: 0 1px 0 rgba(35, 45, 15, 0.35);
+}
+.has-tooltip::before {
+  content: "";
+  bottom: calc(100% + 5px);
+  width: 10px;
+  height: 10px;
+  background: var(--btn-moss);
+  border-right: 2px solid var(--btn-moss-dark);
+  border-bottom: 2px solid var(--btn-moss-dark);
+  border-bottom-right-radius: 3px;
+  transform: translate(-50%, 4px) rotate(45deg);
+  z-index: 11;
+}
+.has-tooltip[data-tooltip]::after { content: attr(data-tooltip); }
+.tooltip-anchor { display: inline-flex; }
+.has-tooltip:is(:focus-visible, :has(:focus-visible))::before,
+.has-tooltip:is(:focus-visible, :has(:focus-visible))::after { opacity: 1; }
+.has-tooltip:is(:focus-visible, :has(:focus-visible))::after { transform: translate(-50%, 0); }
+.has-tooltip:is(:focus-visible, :has(:focus-visible))::before { transform: translate(-50%, 0) rotate(45deg); }
+.has-tooltip:is([aria-expanded="true"], :has([aria-expanded="true"]))::before,
+.has-tooltip:is([aria-expanded="true"], :has([aria-expanded="true"]))::after { display: none; }
+@media (hover: hover) {
+  .has-tooltip:hover::before,
+  .has-tooltip:hover::after { opacity: 1; transition-delay: 250ms; }
+  .has-tooltip:hover::after { transform: translate(-50%, 0); }
+  .has-tooltip:hover::before { transform: translate(-50%, 0) rotate(45deg); }
+}
+
 /* faint paper grain, everywhere */
 body::before {
   content: "";
@@ -134,6 +189,14 @@ button {
   --btn-bg-press: var(--btn-cream-press);
   --btn-bd: var(--btn-tan);
   --btn-fg: var(--btn-ink);
+}
+
+.btn--danger {
+  --btn-bg: #b4583f;
+  --btn-bg-hover: #c1654b;
+  --btn-bg-press: #974631;
+  --btn-bd: #7a3624;
+  --btn-fg: #fffdf3;
 }
 
 .btn:disabled { opacity: 0.45; filter: saturate(0.6); cursor: not-allowed; transform: none; box-shadow: 0 3px 0 var(--btn-bd), inset 0 2px 0 rgba(255, 255, 255, 0.28); }

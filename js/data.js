@@ -2,13 +2,12 @@
 // Secret Garden — data layer
 // Flowers are stored as stroke data (vector), not raster images,
 // so a flower's drawing can be replayed stroke-by-stroke later.
-// Persisted to localStorage so the "shared garden" survives reloads
-// on this device. Swap this module for a Supabase client to make
-// it genuinely shared across visitors — see README.
+// Persisted in the Supabase `flowers` table (see supabase/schema.sql),
+// so every visitor sees the same garden.
 // ===========================================================
 
-const STORAGE_KEY = "secret-garden.flowers.v1";
-const ACTIONS_KEY_PREFIX = "secret-garden.actions.v1:";
+import { supabase } from "./supabase.js";
+import { stashForGarden, takeFromPreload } from "./handoff.js";
 
 /**
  * @typedef {{x:number,y:number}} StrokePoint
@@ -26,174 +25,125 @@ const ACTIONS_KEY_PREFIX = "secret-garden.actions.v1:";
 // that lets the garden replay the actual drawing process, not just its
 // result; flowers saved before this existed simply omit it.
 // The log can be much heavier than `strokes` (every erased stroke, every
-// undone-then-redone step), and only the replay needs it — so it's stored
-// apart from the flower list, one entry per flower, and fetched on demand
-// via getFlowerActions() when someone opens that flower.
+// undone-then-redone step), and only the replay needs it — so the flower
+// list never selects the `actions` column; getFlowerActions() fetches it on
+// demand when someone opens that flower.
 
-function uid() {
-  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+// Must match the check constraints in supabase/schema.sql.
+export const LIMITS = {
+  name: { min: 2, max: 40 },
+  author: { min: 2, max: 30 },
+  message: { min: 5, max: 220 },
+};
+
+const LIST_COLUMNS =
+  "id, created_at, name, author, message, plot_x, plot_y, scale, hue, strokes, is_private, seal";
+
+/** Counts characters the way Postgres char_length() does (code points, not UTF-16 units). */
+export function textLength(str) {
+  return Array.from(str.trim()).length;
 }
 
-function readAll() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch (e) {
-    console.warn("Secret Garden: could not read storage", e);
-    return null;
-  }
+export function isWithinLimit(field, str) {
+  const len = textLength(str);
+  return len >= LIMITS[field].min && len <= LIMITS[field].max;
 }
 
-function writeAll(flowers) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(flowers));
-  } catch (e) {
-    console.warn("Secret Garden: could not save flower (storage full or blocked)", e);
-  }
+function fromRow(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    author: row.author,
+    message: row.message,
+    createdAt: row.created_at,
+    plotX: row.plot_x,
+    plotY: row.plot_y,
+    scale: row.scale,
+    hue: row.hue,
+    strokes: row.strokes,
+    isPrivate: row.is_private,
+    seal: row.seal,
+  };
 }
 
-function writeActions(id, actions) {
-  if (!Array.isArray(actions) || !actions.length) return;
-  try {
-    localStorage.setItem(ACTIONS_KEY_PREFIX + id, JSON.stringify(actions));
-  } catch (e) {
-    console.warn("Secret Garden: could not save drawing history (storage full or blocked)", e);
-  }
-}
+let flowersPromise = null;
 
-/** Moves any `actions` still embedded in the flower list (saved before they
- * were split out) into their own per-flower entries. Returns true if it did. */
-function migrateEmbeddedActions(flowers) {
-  let moved = false;
-  flowers.forEach((f) => {
-    if (!("actions" in f)) return;
-    writeActions(f.id, f.actions);
-    delete f.actions;
-    moved = true;
-  });
-  return moved;
-}
-
-// A handful of hand-authored strokes so the garden never opens empty.
-// Each is a very small line-drawing built from a few soft strokes.
-function seedFlowers() {
-  const petals = (cx, cy, color) => ([
-    { color, size: 6, points: bloomPath(cx, cy, 0) },
-    { color, size: 6, points: bloomPath(cx, cy, 72) },
-    { color, size: 6, points: bloomPath(cx, cy, 144) },
-    { color, size: 6, points: bloomPath(cx, cy, 216) },
-    { color, size: 6, points: bloomPath(cx, cy, 288) },
-    { color: "#6b7f52", size: 5, points: stemPath(cx, cy) },
-  ]);
-
-  function bloomPath(cx, cy, angleDeg) {
-    const a = (angleDeg * Math.PI) / 180;
-    const r1 = 4, r2 = 26;
-    const midA = a + 0.5;
-    return [
-      { x: cx, y: cy },
-      { x: cx + Math.cos(a) * r1, y: cy + Math.sin(a) * r1 },
-      { x: cx + Math.cos(midA) * r2 * 0.7, y: cy + Math.sin(midA) * r2 * 0.7 },
-      { x: cx + Math.cos(a) * r2, y: cy + Math.sin(a) * r2 },
-      { x: cx + Math.cos(a - 0.5) * r2 * 0.7, y: cy + Math.sin(a - 0.5) * r2 * 0.7 },
-      { x: cx, y: cy },
-    ];
-  }
-  function stemPath(cx, cy) {
-    return [
-      { x: cx, y: cy },
-      { x: cx - 4, y: cy + 30 },
-      { x: cx + 3, y: cy + 60 },
-    ];
-  }
-
-  return [
-    {
-      id: "seed-1", name: "Moonflower", author: "Mika",
-      message: "Even on the quietest nights, I hope you find something worth looking at.",
-      createdAt: "2024-03-02T20:10:00.000Z",
-      plotX: 22, plotY: 62, scale: 1, hue: 0,
-      strokes: petals(60, 60, "#e9e2f3"),
-      isPrivate: false, seal: null,
-    },
-    {
-      id: "seed-2", name: "Wren's Wish", author: "Wren",
-      message: "For the version of you that hasn't arrived yet — take your time.",
-      createdAt: "2024-04-11T14:32:00.000Z",
-      plotX: 68, plotY: 70, scale: 1.1, hue: 0,
-      strokes: petals(60, 60, "#d8a3a0"),
-      isPrivate: false, seal: null,
-    },
-    {
-      id: "seed-3", name: "Small Gold Thing", author: "Theo",
-      message: "This one's for the mornings you almost didn't get out of bed, and did anyway.",
-      createdAt: "2024-05-29T09:00:00.000Z",
-      plotX: 45, plotY: 48, scale: 0.9, hue: 0,
-      strokes: petals(60, 60, "#e3b94f"),
-      isPrivate: false, seal: null,
-    },
-    {
-      id: "seed-4", name: "Late Bloomer", author: "Ana",
-      message: "Some things take longer to open. That's not the same as being wrong.",
-      createdAt: "2024-06-14T18:45:00.000Z",
-      plotX: 81, plotY: 40, scale: 1, hue: 0,
-      strokes: petals(60, 60, "#9fc1d0"),
-      isPrivate: false, seal: null,
-    },
-    {
-      id: "seed-5", name: "Whispered Thing", author: "Mika",
-      message: "This one isn't for everyone. If you're reading it, you probably know why.",
-      createdAt: "2024-07-20T21:15:00.000Z",
-      plotX: 34, plotY: 34, scale: 1, hue: 0,
-      strokes: petals(60, 60, "#c2aed1"),
-      isPrivate: true, seal: "lavender",
-    },
-  ];
-}
-
+/** All flowers, oldest first, without their action logs. Fetched once per page load. */
 export function getFlowers() {
-  const stored = readAll();
-  if (stored && Array.isArray(stored) && stored.length) {
-    if (migrateEmbeddedActions(stored)) writeAll(stored);
-    return stored;
+  if (!flowersPromise) {
+    const handedOff = takeFromPreload("flowers");
+    if (Array.isArray(handedOff)) {
+      flowersPromise = Promise.resolve(handedOff);
+      return flowersPromise;
+    }
+    flowersPromise = supabase
+      .from("flowers")
+      .select(LIST_COLUMNS)
+      .order("created_at", { ascending: true })
+      .then(({ data, error }) => {
+        if (error) throw error;
+        const flowers = data.map(fromRow);
+        stashForGarden("flowers", flowers);
+        return flowers;
+      });
+    flowersPromise.catch(() => { flowersPromise = null; });
   }
-  const seeded = seedFlowers();
-  writeAll(seeded);
-  return seeded;
+  return flowersPromise;
 }
 
-/** Stores the flower (without its action log) plus its action log apart.
- * Returns the saved flower record — like getFlowers(), without `actions`. */
-export function addFlower({ actions, ...flower }) {
-  const flowers = getFlowers();
-  const withId = { ...flower, id: uid(), createdAt: new Date().toISOString() };
-  writeActions(withId.id, actions);
-  flowers.push(withId);
-  writeAll(flowers);
-  return withId;
+/** Saves the flower with its action log. Returns the saved record, without `actions`. */
+export async function addFlower({ actions, ...flower }) {
+  const { data, error } = await supabase
+    .from("flowers")
+    .insert({
+      name: flower.name,
+      author: flower.author,
+      message: flower.message,
+      plot_x: flower.plotX,
+      plot_y: flower.plotY,
+      scale: flower.scale,
+      hue: flower.hue,
+      strokes: flower.strokes,
+      actions: Array.isArray(actions) && actions.length ? actions : null,
+      is_private: flower.isPrivate,
+      seal: flower.seal,
+    })
+    .select(LIST_COLUMNS)
+    .single();
+  if (error) throw error;
+  flowersPromise = null;
+  return fromRow(data);
 }
 
-/** A flower's drawing-history log for replay, or null if it has none
- * (seed flowers, flowers planted before the log existed). Async so a
- * networked backend can fetch it lazily with the same call sites. */
+/** A flower's drawing-history log for replay, or null if it has none. */
 export async function getFlowerActions(id) {
-  try {
-    const raw = localStorage.getItem(ACTIONS_KEY_PREFIX + id);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    console.warn("Secret Garden: could not read drawing history", e);
+  const { data, error } = await supabase
+    .from("flowers")
+    .select("actions")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) {
+    console.warn("Secret Garden: could not load drawing history", error);
     return null;
   }
+  return data?.actions ?? null;
 }
 
-export function getFlowerById(id) {
-  return getFlowers().find((f) => f.id === id) || null;
+export async function getFlowerById(id) {
+  const flowers = await getFlowers();
+  return flowers.find((f) => f.id === id) || null;
+}
+
+/** Removes a flower. The server checks `adminKey`; throws if it's wrong or the request fails. */
+export async function deleteFlower(id, adminKey) {
+  const { error } = await supabase.rpc("delete_flower", { flower_id: id, admin_key: adminKey });
+  if (error) throw error;
+  flowersPromise = null;
 }
 
 /** Random-but-stable-feeling open plot, avoiding existing flowers too closely. */
-export function suggestPlot() {
-  const flowers = getFlowers();
+export async function suggestPlot() {
+  const flowers = await getFlowers();
   for (let attempt = 0; attempt < 24; attempt++) {
     const x = 10 + Math.random() * 80;
     const y = 30 + Math.random() * 55;

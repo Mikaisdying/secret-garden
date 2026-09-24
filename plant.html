@@ -33,19 +33,18 @@
         <button class="swatch" style="background:#c2aed1" data-color="#c2aed1" aria-label="Lavender" data-i18n-aria-label="plant.swatchLavender"></button>
         <button class="swatch" style="background:#e3b94f" data-color="#e3b94f" aria-label="Soft yellow" data-i18n-aria-label="plant.swatchYellow"></button>
         <button class="swatch" style="background:#9fc1d0" data-color="#9fc1d0" aria-label="Sky blue" data-i18n-aria-label="plant.swatchBlue"></button>
-        <button class="swatch" style="background:#4a3826" data-color="#4a3826" aria-label="Ink brown" data-i18n-aria-label="plant.swatchBrown"></button>
         <div class="custom-color-wrap">
-          <button
-            type="button"
-            class="swatch swatch--custom"
-            id="customColorBtn"
-            aria-label="Custom color"
-            data-i18n-aria-label="plant.customColor"
-            aria-haspopup="true"
-            aria-expanded="false"
-            title="Custom color"
-            data-i18n-title="plant.customColor"
-          ></button>
+          <span class="has-tooltip tooltip-anchor" data-tooltip="Custom color" data-i18n-tooltip="plant.customColor">
+            <button
+              type="button"
+              class="swatch swatch--custom"
+              id="customColorBtn"
+              aria-label="Custom color"
+              data-i18n-aria-label="plant.customColor"
+              aria-haspopup="true"
+              aria-expanded="false"
+            ></button>
+          </span>
           <div class="color-popover" id="colorPopover" role="dialog" aria-label="Custom color picker" data-i18n-aria-label="plant.customColorPicker" hidden>
             <div class="swatch color-popover__preview" id="colorPreview" aria-hidden="true"></div>
             <div class="color-popover__row">
@@ -58,7 +57,7 @@
             </div>
             <div class="color-popover__row">
               <label for="lightRange" data-i18n="plant.lightness">Lightness</label>
-              <input type="range" id="lightRange" min="45" max="80" step="1" value="55" />
+              <input type="range" id="lightRange" min="18" max="96" step="1" value="55" />
             </div>
           </div>
         </div>
@@ -66,11 +65,11 @@
         <label for="brushSize" class="visually-hidden" data-i18n="plant.brushSize">Brush size</label>
         <input type="range" id="brushSize" class="brush-range" min="2" max="14" value="6" />
         <div class="toolbar-sep"></div>
-        <button class="icon-btn" id="eraseBtn" aria-label="Eraser" title="Eraser" data-i18n-aria-label="plant.eraser" data-i18n-title="plant.eraser">⌫</button>
-        <button class="icon-btn" id="fillBtn" aria-label="Fill" title="Fill" data-i18n-aria-label="plant.fill" data-i18n-title="plant.fill">▩</button>
-        <button class="icon-btn" id="undoBtn" aria-label="Undo" title="Undo" data-i18n-aria-label="plant.undo" data-i18n-title="plant.undo">↶</button>
-        <button class="icon-btn" id="redoBtn" aria-label="Redo" title="Redo" data-i18n-aria-label="plant.redo" data-i18n-title="plant.redo">↷</button>
-        <button class="icon-btn" id="clearBtn" aria-label="Clear" title="Clear" data-i18n-aria-label="plant.clear" data-i18n-title="plant.clear">✕</button>
+        <button class="icon-btn has-tooltip" id="eraseBtn" aria-label="Eraser" data-i18n-aria-label="plant.eraser">⌫</button>
+        <button class="icon-btn has-tooltip" id="fillBtn" aria-label="Fill" data-i18n-aria-label="plant.fill">▩</button>
+        <button class="icon-btn has-tooltip" id="undoBtn" aria-label="Undo" data-i18n-aria-label="plant.undo">↶</button>
+        <button class="icon-btn has-tooltip" id="redoBtn" aria-label="Redo" data-i18n-aria-label="plant.redo">↷</button>
+        <button class="icon-btn has-tooltip" id="clearBtn" aria-label="Clear" data-i18n-aria-label="plant.clear">✕</button>
       </div>
       <div class="draw-canvas-wrap">
         <svg id="drawSvg" viewBox="0 0 120 120"></svg>
@@ -107,11 +106,11 @@
       <p class="plant-step__hint" data-i18n="plant.step3Hint">Something small and personal usually fits best.</p>
       <div class="field">
         <label for="flowerName" data-i18n="plant.flowerNameLabel">Flower name</label>
-        <input type="text" id="flowerName" maxlength="40" placeholder="Moonflower" data-i18n-placeholder="plant.flowerNamePlaceholder" autocomplete="off" />
+        <input type="text" id="flowerName" minlength="2" maxlength="40" placeholder="Moonflower" data-i18n-placeholder="plant.flowerNamePlaceholder" autocomplete="off" />
       </div>
       <div class="field">
         <label for="flowerAuthor" data-i18n="plant.authorLabel">Your name (shown as who planted it)</label>
-        <input type="text" id="flowerAuthor" maxlength="30" placeholder="Mika" data-i18n-placeholder="plant.authorPlaceholder" autocomplete="off" />
+        <input type="text" id="flowerAuthor" minlength="2" maxlength="30" placeholder="Mika" data-i18n-placeholder="plant.authorPlaceholder" autocomplete="off" />
       </div>
       <div class="plant-nav">
         <button class="btn btn--ghost" id="backTo2" data-i18n="plant.back">Back</button>
@@ -125,7 +124,7 @@
       <p class="plant-step__hint" data-i18n="plant.step4Hint">Who is this flower for? What would you like it to say?</p>
       <div class="field">
         <label for="flowerMessage" data-i18n="plant.messageLabel">Your message</label>
-        <textarea id="flowerMessage" maxlength="220" placeholder="Even on the quietest nights, I hope you find something worth looking at." data-i18n-placeholder="plant.messagePlaceholder"></textarea>
+        <textarea id="flowerMessage" minlength="5" maxlength="220" placeholder="Even on the quietest nights, I hope you find something worth looking at." data-i18n-placeholder="plant.messagePlaceholder"></textarea>
         <div class="field__count"><span id="msgCount">0</span>/220</div>
       </div>
       <div class="field">
@@ -156,6 +155,7 @@
           <span data-i18n="plant.previewSealed">This letter will stay sealed for everyone but the one it's meant for.</span>
         </div>
       </div>
+      <p class="plant-error" id="plantError" role="alert" hidden></p>
       <div class="plant-nav">
         <button class="btn btn--ghost" id="backTo4" data-i18n="plant.back">Back</button>
         <button class="btn btn--primary" id="plantBtn" data-i18n="plant.plantBtn">Plant it</button>

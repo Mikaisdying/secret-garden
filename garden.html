@@ -13,7 +13,7 @@
 
 <span class="lang-switcher-fab" data-lang-switcher></span>
 
-<a class="shovel-fab" href="plant.html" aria-label="Plant a Flower" data-i18n-aria-label="landing.ctaPlant" title="Plant a Flower" data-i18n-title="landing.ctaPlant">
+<a class="shovel-fab" id="shovelFab" href="plant.html" aria-label="Plant a Flower" data-i18n-aria-label="landing.ctaPlant" title="Plant a Flower" data-i18n-title="landing.ctaPlant">
   <svg viewBox="0 0 200 400" fill="none" aria-hidden="true">
     <defs>
       <linearGradient id="shovelWood" x1="0" y1="0" x2="1" y2="0">
@@ -40,7 +40,57 @@
   </svg>
 </a>
 
-<main class="garden-scene" id="gardenScene">
+<button type="button" class="watering-can-fab" id="wateringCan" hidden
+        aria-label="Read every letter" data-i18n-aria-label="garden.wateringCan"
+        title="Read every letter" data-i18n-title="garden.wateringCan"
+        aria-haspopup="dialog" aria-controls="galleryOverlay">
+  <svg viewBox="0 0 240 200" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="canBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#b9d3a4"/>
+        <stop offset="50%" stop-color="#8fb27c"/>
+        <stop offset="100%" stop-color="#5f8452"/>
+      </linearGradient>
+      <linearGradient id="canSpout" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#a7c692"/>
+        <stop offset="100%" stop-color="#5f8452"/>
+      </linearGradient>
+    </defs>
+    <g class="watering-can-fab__drops" fill="#9fd4e4">
+      <path d="M10 104c0-5 4-10 4-10s4 5 4 10a4 4 0 0 1-8 0Z"/>
+      <path d="M26 120c0-5 4-10 4-10s4 5 4 10a4 4 0 0 1-8 0Z"/>
+      <path d="M4 132c0-5 4-10 4-10s4 5 4 10a4 4 0 0 1-8 0Z"/>
+    </g>
+    <path d="M150 82c0-46 66-52 60 6-3 30-18 46-30 56" stroke="#4f7045" stroke-width="13" stroke-linecap="round"/>
+    <path d="M150 82c0-46 66-52 60 6-3 30-18 46-30 56" stroke="#8fb27c" stroke-width="6" stroke-linecap="round"/>
+    <path d="M74 150 26 78l12-8 46 60Z" fill="url(#canSpout)" stroke="#4f7045" stroke-width="3" stroke-linejoin="round"/>
+    <g transform="rotate(-34 30 72)">
+      <rect x="12" y="62" width="36" height="18" rx="7" fill="#c7cbd3" stroke="#5b5e66" stroke-width="3"/>
+      <g fill="#5b5e66"><circle cx="20" cy="71" r="1.8"/><circle cx="27" cy="71" r="1.8"/><circle cx="34" cy="71" r="1.8"/><circle cx="41" cy="71" r="1.8"/></g>
+    </g>
+    <path d="M68 82h108l8 90c1 10-5 16-15 16H78c-10 0-16-6-15-16Z" fill="url(#canBody)" stroke="#4f7045" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="122" cy="82" rx="56" ry="9" fill="#a7c692" stroke="#4f7045" stroke-width="3"/>
+    <path d="M78 96c-2 24-1 50 3 76" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.35"/>
+    <g transform="translate(124 136)">
+      <g fill="#fffdf2" stroke="#d6cba6" stroke-width="1.2">
+        <circle cx="0" cy="-11" r="8"/><circle cx="0" cy="-11" r="8" transform="rotate(72)"/><circle cx="0" cy="-11" r="8" transform="rotate(144)"/><circle cx="0" cy="-11" r="8" transform="rotate(216)"/><circle cx="0" cy="-11" r="8" transform="rotate(288)"/>
+      </g>
+      <circle r="6" fill="#f4b83c" stroke="#d9922a" stroke-width="1.2"/>
+    </g>
+  </svg>
+</button>
+
+<div class="gallery-overlay" id="galleryOverlay" hidden>
+  <section class="gallery-panel" role="dialog" aria-modal="true" aria-labelledby="galleryTitle">
+    <header class="gallery-panel__head">
+      <h2 class="gallery-panel__title" id="galleryTitle" data-i18n="garden.galleryTitle">Every letter in the garden</h2>
+      <button type="button" class="icon-btn icon-btn--sm" id="galleryClose" aria-label="Close" data-i18n-aria-label="garden.close">✕</button>
+    </header>
+    <ul class="gallery-grid" id="galleryGrid"></ul>
+  </section>
+</div>
+
+<main class="garden-scene is-booting" id="gardenScene">
   <svg class="garden-scene__layer garden-scene__ground" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <rect x="0" y="0" width="1440" height="900" fill="#93a86e"/>
     <g id="grassTufts"></g>
@@ -60,6 +110,14 @@
 
 <div class="detail-overlay" id="detailOverlay">
   <div class="detail-panel" role="dialog" aria-modal="true" id="detailPanel">
+    <button type="button" class="detail-panel__trash" id="deleteFlowerBtn" hidden
+            aria-label="Remove this flower" data-i18n-aria-label="garden.deleteFlower"
+            title="Remove this flower" data-i18n-title="garden.deleteFlower">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v5.5M14 11v5.5"/>
+      </svg>
+    </button>
+
     <div class="story-stack" id="storyStack" hidden>
       <div class="story-card story-card--stamp" id="stampCard" tabindex="0" role="button"
            aria-label="Bring the message card to the front" data-i18n-aria-label="garden.bringMessageForward">
@@ -89,8 +147,8 @@
               <li role="option" data-value="2">2x</li>
             </ul>
           </div>
-          <button class="icon-btn icon-btn--sm" id="replayToggle" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
-          <button class="icon-btn icon-btn--sm" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
+          <button class="icon-btn icon-btn--sm has-tooltip" id="replayToggle" aria-label="Play" data-i18n-aria-label="garden.replayPlay">▶</button>
+          <button class="icon-btn icon-btn--sm has-tooltip" id="replayAgain" aria-label="Replay from start" data-i18n-aria-label="garden.replayAgain">↺</button>
         </div>
       </div>
     </div>
@@ -109,6 +167,21 @@
     </div>
   </div>
 </div>
+
+<!-- Delete confirmation -->
+<div class="confirm-overlay" id="deleteConfirm" hidden>
+  <section class="confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="deleteConfirmTitle" aria-describedby="deleteConfirmText">
+    <h2 class="confirm-card__title" id="deleteConfirmTitle" data-i18n="garden.deleteConfirmTitle">Remove this flower?</h2>
+    <p class="confirm-card__text" id="deleteConfirmText">—</p>
+    <p class="confirm-card__error" id="deleteConfirmError" role="alert" hidden></p>
+    <div class="confirm-card__actions">
+      <button type="button" class="btn btn--ghost" id="deleteCancelBtn" data-i18n="garden.deleteCancel">Keep it</button>
+      <button type="button" class="btn btn--danger" id="deleteConfirmBtn" data-i18n="garden.deleteConfirm">Remove</button>
+    </div>
+  </section>
+</div>
+
+<p class="garden-status" id="gardenStatus" role="status" hidden></p>
 
 <script type="module" src="js/garden.js"></script>
 </body>

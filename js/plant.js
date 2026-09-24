@@ -1,4 +1,4 @@
-import { addFlower, getFlowers } from "./data.js";
+import { addFlower, getFlowers, isWithinLimit } from "./data.js";
 import { createDrawingCanvas, buildStrokesGroup } from "./draw.js";
 import { initI18n, t, onLanguageChange } from "./i18n/index.js";
 import { SEALS, sealSvgMarkup } from "./seals.js";
@@ -144,13 +144,15 @@ const toStep3 = document.getElementById("toStep3");
 
 paintGrassTufts(document.getElementById("pickerGrass"));
 
-getFlowers().forEach((f) => {
-  const dot = document.createElement("div");
-  dot.className = "plot-picker__existing";
-  dot.style.left = `${f.plotX}%`;
-  dot.style.top = `${f.plotY}%`;
-  existingDotsLayer.appendChild(dot);
-});
+getFlowers()
+  .then((flowers) => flowers.forEach((f) => {
+    const dot = document.createElement("div");
+    dot.className = "plot-picker__existing";
+    dot.style.left = `${f.plotX}%`;
+    dot.style.top = `${f.plotY}%`;
+    existingDotsLayer.appendChild(dot);
+  }))
+  .catch((e) => console.warn("Secret Garden: could not load existing flowers", e));
 
 plotPicker.addEventListener("click", (e) => {
   const rect = plotPicker.getBoundingClientRect();
@@ -173,7 +175,7 @@ const authorInput = document.getElementById("flowerAuthor");
 const toStep4 = document.getElementById("toStep4");
 
 function checkStep3() {
-  toStep4.disabled = !(nameInput.value.trim() && authorInput.value.trim());
+  toStep4.disabled = !(isWithinLimit("name", nameInput.value) && isWithinLimit("author", authorInput.value));
 }
 nameInput.addEventListener("input", checkStep3);
 authorInput.addEventListener("input", checkStep3);
@@ -192,7 +194,7 @@ const toStep5 = document.getElementById("toStep5");
 
 messageInput.addEventListener("input", () => {
   msgCount.textContent = String(messageInput.value.length);
-  toStep5.disabled = messageInput.value.trim().length === 0;
+  toStep5.disabled = !isWithinLimit("message", messageInput.value);
 });
 
 document.getElementById("backTo3").addEventListener("click", () => goTo(3));
@@ -262,23 +264,40 @@ onLanguageChange(() => {
 
 document.getElementById("backTo4").addEventListener("click", () => goTo(4));
 
-document.getElementById("plantBtn").addEventListener("click", (e) => {
-  if (e.currentTarget.disabled) return;
-  e.currentTarget.disabled = true;
+const plantBtn = document.getElementById("plantBtn");
+const plantError = document.getElementById("plantError");
 
-  const flower = addFlower({
-    name: state.name,
-    author: state.author,
-    message: state.message,
-    plotX: state.plotX,
-    plotY: state.plotY,
-    scale: 0.9 + Math.random() * 0.3,
-    hue: 0,
-    strokes: canvas.getStrokes(),
-    actions: canvas.getActions(),
-    isPrivate: state.isPrivate,
-    seal: state.isPrivate ? state.seal : null,
-  });
+onLanguageChange(() => {
+  if (!plantError.hidden) plantError.textContent = t("plant.saveError");
+});
+
+plantBtn.addEventListener("click", async () => {
+  if (plantBtn.disabled) return;
+  plantBtn.disabled = true;
+  plantError.hidden = true;
+
+  let flower;
+  try {
+    flower = await addFlower({
+      name: state.name,
+      author: state.author,
+      message: state.message,
+      plotX: state.plotX,
+      plotY: state.plotY,
+      scale: 0.9 + Math.random() * 0.3,
+      hue: 0,
+      strokes: canvas.getStrokes(),
+      actions: canvas.getActions(),
+      isPrivate: state.isPrivate,
+      seal: state.isPrivate ? state.seal : null,
+    });
+  } catch (err) {
+    console.warn("Secret Garden: could not plant flower", err);
+    plantError.textContent = t("plant.saveError");
+    plantError.hidden = false;
+    plantBtn.disabled = false;
+    return;
+  }
 
   const confirm = document.getElementById("growConfirm");
   drawInto(document.getElementById("growSvg"), flower.strokes);

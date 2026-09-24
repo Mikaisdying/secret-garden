@@ -12,6 +12,8 @@
 // simply assume a clear sky rather than guess.
 // ===========================================================
 
+import { stashForGarden, takeFromPreload } from "./handoff.js";
+
 const RAIN_WEATHER_CODES = new Set([
   51, 53, 55, 56, 57, // drizzle
   61, 63, 65, 66, 67, // rain
@@ -98,5 +100,13 @@ export function initEnvironment(sceneEl) {
   applyTimeOfDay();
   setInterval(applyTimeOfDay, 5 * 60 * 1000);
 
-  checkRain().then((rainy) => sceneEl.classList.toggle("is-rainy", rainy));
+  const handedOff = takeFromPreload("rainy");
+  if (typeof handedOff === "boolean") {
+    sceneEl.classList.toggle("is-rainy", handedOff);
+    return;
+  }
+  checkRain().then((rainy) => {
+    sceneEl.classList.toggle("is-rainy", rainy);
+    stashForGarden("rainy", rainy);
+  });
 }

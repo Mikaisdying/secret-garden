@@ -1,9 +1,9 @@
-import { getFlowers, getFlowerActions, formatDate } from "./data.js";
+import { getFlowers, getFlowerActions, deleteFlower, formatDate } from "./data.js";
 import { buildStrokesGroup, createReplayPlayer } from "./draw.js";
 import { initI18n, t, getLocale, onLanguageChange } from "./i18n/index.js";
 import { initEnvironment } from "./environment.js";
 import { sealSvgMarkup } from "./seals.js";
-import { canOpenPrivateLetters } from "./access.js";
+import { canOpenPrivateLetters, getAccessKey } from "./access.js";
 import { seededRandom, paintGrassTufts } from "./scenery.js";
 
 document.body.addEventListener("touchstart", () => {}, { passive: true });
@@ -45,8 +45,9 @@ function spawnFireflies() {
     fly.style.setProperty("--fy", `${-40 - Math.random() * 80}px`);
     fly.style.setProperty("--fx2", `${(Math.random() - 0.5) * 160}px`);
     fly.style.setProperty("--fy2", `${-100 - Math.random() * 120}px`);
-    fly.style.animationDuration = `${8 + Math.random() * 6}s`;
-    fly.style.animationDelay = `${Math.random() * 6}s`;
+    const duration = 8 + Math.random() * 6;
+    fly.style.animationDuration = `${duration}s`;
+    fly.style.animationDelay = `${-Math.random() * duration}s`;
     layer.appendChild(fly);
   }
 }
@@ -65,8 +66,9 @@ function spawnWindLeaves() {
     leaf.style.setProperty("--wy", `${(Math.random() - 0.5) * 60}px`);
     leaf.style.setProperty("--wx2", `${90 + Math.random() * 30}vw`);
     leaf.style.setProperty("--wy2", `${(Math.random() - 0.5) * 100}px`);
-    leaf.style.animationDuration = `${7 + Math.random() * 6}s`;
-    leaf.style.animationDelay = `${Math.random() * 8}s`;
+    const duration = 7 + Math.random() * 6;
+    leaf.style.animationDuration = `${duration}s`;
+    leaf.style.animationDelay = `${-Math.random() * duration}s`;
     layer.appendChild(leaf);
   }
 }
@@ -80,8 +82,9 @@ function spawnRainDrops() {
     const drop = document.createElement("div");
     drop.className = "rain-drop";
     drop.style.left = `${Math.random() * 100}%`;
-    drop.style.animationDuration = `${0.55 + Math.random() * 0.4}s`;
-    drop.style.animationDelay = `${Math.random() * 1.2}s`;
+    const duration = 0.55 + Math.random() * 0.4;
+    drop.style.animationDuration = `${duration}s`;
+    drop.style.animationDelay = `${-Math.random() * duration}s`;
     layer.appendChild(drop);
   }
 }
@@ -100,11 +103,30 @@ function flowerAriaLabel(flower) {
   return t(key, { name: flower.name, author: flower.author });
 }
 
-function renderFlowers() {
-  const flowers = getFlowers();
+const gardenStatus = document.getElementById("gardenStatus");
+
+function showStatus(key) {
+  gardenStatus.dataset.i18nKey = key;
+  gardenStatus.textContent = t(key);
+  gardenStatus.hidden = false;
+}
+
+async function loadFlowers() {
+  try {
+    return await getFlowers();
+  } catch (e) {
+    console.warn("Secret Garden: could not load flowers", e);
+    showStatus("garden.loadError");
+    return [];
+  }
+}
+
+async function renderFlowers() {
+  const flowers = await loadFlowers();
   flowers.forEach((flower, i) => {
     const btn = document.createElement("button");
     btn.className = "garden-plot";
+    btn.dataset.id = flower.id;
     if (flower.id === justPlantedId) btn.classList.add("garden-plot--new");
     btn.style.left = `${flower.plotX}%`;
     btn.style.top = `${flower.plotY}%`;
@@ -118,6 +140,7 @@ function renderFlowers() {
     btn.addEventListener("click", () => openDetail(flower));
     plantLayer.appendChild(btn);
   });
+  return flowers;
 }
 
 // --- Detail panel + replay wiring ---
@@ -181,7 +204,7 @@ function setReplayToggleState(isPlaying) {
 // has already closed (or moved on from) never hijacks the replay.
 let openToken = 0;
 
-async function openDetail(flower) {
+async function openDetail(flower, { front = "drawing" } = {}) {
   const token = ++openToken;
   currentFlower = flower;
   detailPanel.setAttribute("aria-label", flower.name);
@@ -193,7 +216,7 @@ async function openDetail(flower) {
   player = null;
   setReplayToggleState(false);
   if (locked) return;
-  bringToFront(polaroidCard);
+  bringToFront(front === "letter" ? stampCard : polaroidCard);
   // The action log is only loaded here, when a flower is actually opened —
   // the garden itself only needs `strokes` for the thumbnails.
   const [actions] = await Promise.all([
@@ -215,13 +238,145 @@ function closeDetail() {
   player?.pause();
   setReplayToggleState(false);
   closeSpeedDropdown();
+  if (!galleryOverlay.hidden) lastGalleryCard?.focus();
 }
 
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeDetail(); });
 // On mobile the panel stretches to fill the overlay, so its empty background
 // (not the story card/envelope itself) is the only "outside" a tap can hit.
 detailPanel.addEventListener("click", (e) => { if (e.target === detailPanel) closeDetail(); });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (!deleteConfirm.hidden) { if (!deleteCancelBtn.disabled) closeDeleteConfirm(); }
+  else if (overlay.classList.contains("is-open")) closeDetail();
+  else if (!galleryOverlay.hidden) closeGallery();
+});
+
+const wateringCan = document.getElementById("wateringCan");
+const galleryOverlay = document.getElementById("galleryOverlay");
+const galleryGrid = document.getElementById("galleryGrid");
+const galleryClose = document.getElementById("galleryClose");
+let lastGalleryCard = null;
+
+function galleryCard(flower) {
+  const li = document.createElement("li");
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "gallery-card";
+  btn.setAttribute("aria-label", t("garden.galleryCardAria", { name: flower.name, author: flower.author }));
+
+  const frame = document.createElement("span");
+  frame.className = "gallery-card__frame";
+  frame.appendChild(flowerThumb(flower));
+  if (flower.isPrivate) {
+    const seal = document.createElement("span");
+    seal.className = "gallery-card__seal";
+    seal.innerHTML = sealSvgMarkup(flower.seal);
+    frame.appendChild(seal);
+  }
+
+  const name = document.createElement("span");
+  name.className = "gallery-card__name";
+  name.textContent = flower.name;
+  const author = document.createElement("span");
+  author.className = "gallery-card__author";
+  author.textContent = flower.author;
+
+  btn.append(frame, name, author);
+  btn.addEventListener("click", () => {
+    lastGalleryCard = btn;
+    openDetail(flower, { front: "letter" });
+  });
+  li.appendChild(btn);
+  return li;
+}
+
+async function renderGallery() {
+  const flowers = await loadFlowers();
+  if (!flowers.length) {
+    const empty = document.createElement("li");
+    empty.className = "gallery-grid__empty";
+    empty.textContent = t("garden.galleryEmpty");
+    galleryGrid.replaceChildren(empty);
+    return;
+  }
+  galleryGrid.replaceChildren(...flowers.map(galleryCard));
+}
+
+async function openGallery() {
+  await renderGallery();
+  galleryOverlay.hidden = false;
+  requestAnimationFrame(() => galleryOverlay.classList.add("is-open"));
+  galleryClose.focus();
+}
+
+function closeGallery() {
+  galleryOverlay.classList.remove("is-open");
+  galleryOverlay.hidden = true;
+  lastGalleryCard = null;
+  wateringCan.focus();
+}
+
+wateringCan.addEventListener("click", openGallery);
+galleryClose.addEventListener("click", closeGallery);
+galleryOverlay.addEventListener("click", (e) => { if (e.target === galleryOverlay) closeGallery(); });
+
+// --- Delete (unlock mode only; the server re-checks the key) ---
+const deleteFlowerBtn = document.getElementById("deleteFlowerBtn");
+const deleteConfirm = document.getElementById("deleteConfirm");
+const deleteConfirmText = document.getElementById("deleteConfirmText");
+const deleteConfirmError = document.getElementById("deleteConfirmError");
+const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
+const deleteCancelBtn = document.getElementById("deleteCancelBtn");
+
+function setDeleteBusy(busy) {
+  deleteConfirmBtn.disabled = busy;
+  deleteCancelBtn.disabled = busy;
+}
+
+function openDeleteConfirm() {
+  if (!currentFlower) return;
+  deleteConfirmText.textContent = t("garden.deleteConfirmText", { name: currentFlower.name });
+  deleteConfirmError.hidden = true;
+  setDeleteBusy(false);
+  deleteConfirm.hidden = false;
+  deleteCancelBtn.focus();
+}
+
+function closeDeleteConfirm() {
+  deleteConfirm.hidden = true;
+  deleteFlowerBtn.focus();
+}
+
+async function confirmDelete() {
+  const flower = currentFlower;
+  if (!flower) return;
+  setDeleteBusy(true);
+  try {
+    await deleteFlower(flower.id, getAccessKey());
+  } catch (e) {
+    console.warn("Secret Garden: could not remove flower", e);
+    deleteConfirmError.textContent = t("garden.deleteError");
+    deleteConfirmError.hidden = false;
+    setDeleteBusy(false);
+    return;
+  }
+  plantLayer.querySelector(`.garden-plot[data-id="${CSS.escape(flower.id)}"]`)?.remove();
+  deleteConfirm.hidden = true;
+  closeDetail();
+  if (!galleryOverlay.hidden) {
+    lastGalleryCard = null;
+    await renderGallery();
+    galleryClose.focus();
+  }
+}
+
+deleteFlowerBtn.addEventListener("click", openDeleteConfirm);
+deleteCancelBtn.addEventListener("click", closeDeleteConfirm);
+deleteConfirmBtn.addEventListener("click", confirmDelete);
+deleteConfirm.addEventListener("click", (e) => {
+  if (e.target === deleteConfirm && !deleteCancelBtn.disabled) closeDeleteConfirm();
+});
 
 replayToggle.addEventListener("click", () => {
   if (!player) return;
@@ -275,10 +430,17 @@ paintScenery();
 spawnFireflies();
 spawnWindLeaves();
 spawnRainDrops();
-renderFlowers();
-initEnvironment(document.getElementById("gardenScene"));
+const flowersReady = renderFlowers();
+const gardenScene = document.getElementById("gardenScene");
+initEnvironment(gardenScene);
+requestAnimationFrame(() => requestAnimationFrame(() => gardenScene.classList.remove("is-booting")));
 
 onLanguageChange(() => {
+  if (!gardenStatus.hidden) gardenStatus.textContent = t(gardenStatus.dataset.i18nKey);
+  if (!deleteConfirm.hidden && currentFlower) {
+    deleteConfirmText.textContent = t("garden.deleteConfirmText", { name: currentFlower.name });
+    if (!deleteConfirmError.hidden) deleteConfirmError.textContent = t("garden.deleteError");
+  }
   plantLayer.querySelectorAll(".garden-plot").forEach((btn) => {
     const key = btn.dataset.private ? "garden.flowerAriaSealed" : "garden.flowerAria";
     btn.setAttribute("aria-label", t(key, { name: btn.dataset.name, author: btn.dataset.author }));
@@ -297,12 +459,18 @@ if (canOpenPrivateLetters()) {
   banner.textContent = t("garden.unlockedBanner");
   document.body.appendChild(banner);
   onLanguageChange(() => { banner.textContent = t("garden.unlockedBanner"); });
+  document.getElementById("shovelFab").hidden = true;
+  wateringCan.hidden = false;
+  deleteFlowerBtn.hidden = false;
+  onLanguageChange(() => { if (!galleryOverlay.hidden) renderGallery(); });
 }
 
 // If we just arrived from planting, open that flower's story automatically.
 if (justPlantedId) {
-  const planted = getFlowers().find((f) => f.id === justPlantedId);
-  if (planted) setTimeout(() => openDetail(planted), 900);
+  flowersReady.then((flowers) => {
+    const planted = flowers.find((f) => f.id === justPlantedId);
+    if (planted) setTimeout(() => openDetail(planted), 900);
+  });
   params.delete("planted");
   const cleanQuery = params.toString();
   history.replaceState(null, "", location.pathname + (cleanQuery ? `?${cleanQuery}` : "") + location.hash);
