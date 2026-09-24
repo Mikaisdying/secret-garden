@@ -24,8 +24,8 @@ create table if not exists public.flowers (
   seal        text,
 
   -- Keep in sync with LIMITS in js/data.js and maxlength in plant.html.
-  constraint flowers_name_len    check (char_length(btrim(name))    between 2 and 40),
-  constraint flowers_author_len  check (char_length(btrim(author))  between 2 and 30),
+  constraint flowers_name_len    check (char_length(btrim(name))    between 1 and 40),
+  constraint flowers_author_len  check (char_length(btrim(author))  between 1 and 30),
   constraint flowers_message_len check (char_length(btrim(message)) between 5 and 220),
   constraint flowers_plot        check (plot_x between 0 and 100 and plot_y between 0 and 100),
   constraint flowers_scale       check (scale between 0.5 and 2),
@@ -38,6 +38,11 @@ create table if not exists public.flowers (
                                             and pg_column_size(actions) <= 2048000)),
   constraint flowers_seal        check (seal is null or char_length(seal) <= 20)
 );
+
+alter table public.flowers drop constraint if exists flowers_name_len;
+alter table public.flowers add constraint flowers_name_len check (char_length(btrim(name)) between 1 and 40);
+alter table public.flowers drop constraint if exists flowers_author_len;
+alter table public.flowers add constraint flowers_author_len check (char_length(btrim(author)) between 1 and 30);
 
 create index if not exists flowers_created_at_idx on public.flowers (created_at);
 

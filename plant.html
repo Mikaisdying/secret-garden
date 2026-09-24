@@ -106,15 +106,17 @@
       <p class="plant-step__hint" data-i18n="plant.step3Hint">Something small and personal usually fits best.</p>
       <div class="field">
         <label for="flowerName" data-i18n="plant.flowerNameLabel">Flower name</label>
-        <input type="text" id="flowerName" minlength="2" maxlength="40" placeholder="Moonflower" data-i18n-placeholder="plant.flowerNamePlaceholder" autocomplete="off" />
+        <input type="text" id="flowerName" required maxlength="40" placeholder="Moonflower" data-i18n-placeholder="plant.flowerNamePlaceholder" autocomplete="off" aria-describedby="flowerNameError" />
+        <p class="field__error" id="flowerNameError" hidden data-i18n="plant.flowerNameRequired">Your flower needs a name, even a single letter will do.</p>
       </div>
       <div class="field">
         <label for="flowerAuthor" data-i18n="plant.authorLabel">Your name (shown as who planted it)</label>
-        <input type="text" id="flowerAuthor" minlength="2" maxlength="30" placeholder="Mika" data-i18n-placeholder="plant.authorPlaceholder" autocomplete="off" />
+        <input type="text" id="flowerAuthor" required maxlength="30" placeholder="Mika" data-i18n-placeholder="plant.authorPlaceholder" autocomplete="off" aria-describedby="flowerAuthorError" />
+        <p class="field__error" id="flowerAuthorError" hidden data-i18n="plant.authorRequired">Please leave a name. It doesn't have to be your real one, just a hint of who planted this.</p>
       </div>
       <div class="plant-nav">
         <button class="btn btn--ghost" id="backTo2" data-i18n="plant.back">Back</button>
-        <button class="btn btn--primary" id="toStep4" disabled data-i18n="plant.step3Next">Next: leave a message</button>
+        <button class="btn btn--primary" id="toStep4" data-i18n="plant.step3Next">Next: leave a message</button>
       </div>
     </section>
 

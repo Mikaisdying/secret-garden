@@ -7,8 +7,14 @@ export function stashForGarden(name, value) {
   try {
     sessionStorage.setItem(PREFIX + name, JSON.stringify({ at: Date.now(), value }));
   } catch {
-    // Storage blocked or over quota (stroke data can be large): the real page just fetches again.
+    discardStash(name);
   }
+}
+
+function discardStash(name) {
+  try {
+    sessionStorage.removeItem(PREFIX + name);
+  } catch {}
 }
 
 export function takeFromPreload(name) {

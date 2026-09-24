@@ -277,6 +277,8 @@
 }
 .field textarea { min-height: 110px; }
 .field input:focus, .field textarea:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(147,166,126,0.25); }
+.field input[aria-invalid="true"] { border-color: #b4574f; }
+.field__error { color: #a2463f; font-style: italic; font-size: var(--step-small); margin-top: 0.35rem; }
 .field__count { text-align: right; font-size: var(--step-small); color: var(--ink-soft); margin-top: 0.3rem; }
 
 /* Private letter toggle + wax seal picker */

@@ -173,15 +173,32 @@ toStep3.addEventListener("click", () => goTo(3));
 const nameInput = document.getElementById("flowerName");
 const authorInput = document.getElementById("flowerAuthor");
 const toStep4 = document.getElementById("toStep4");
+const step3Fields = [
+  { input: nameInput, field: "name", error: document.getElementById("flowerNameError") },
+  { input: authorInput, field: "author", error: document.getElementById("flowerAuthorError") },
+];
 
-function checkStep3() {
-  toStep4.disabled = !(isWithinLimit("name", nameInput.value) && isWithinLimit("author", authorInput.value));
+function showFieldError({ input, field, error }) {
+  const valid = isWithinLimit(field, input.value);
+  error.hidden = valid;
+  input.setAttribute("aria-invalid", String(!valid));
+  return valid;
 }
-nameInput.addEventListener("input", checkStep3);
-authorInput.addEventListener("input", checkStep3);
+
+step3Fields.forEach((f) => {
+  f.input.addEventListener("blur", () => showFieldError(f));
+  f.input.addEventListener("input", () => {
+    if (!f.error.hidden) showFieldError(f);
+  });
+});
 
 document.getElementById("backTo2").addEventListener("click", () => goTo(2));
 toStep4.addEventListener("click", () => {
+  const invalid = step3Fields.filter((f) => !showFieldError(f));
+  if (invalid.length) {
+    invalid[0].input.focus();
+    return;
+  }
   state.name = nameInput.value.trim();
   state.author = authorInput.value.trim();
   goTo(4);

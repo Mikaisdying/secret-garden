@@ -31,8 +31,8 @@ import { stashForGarden, takeFromPreload } from "./handoff.js";
 
 // Must match the check constraints in supabase/schema.sql.
 export const LIMITS = {
-  name: { min: 2, max: 40 },
-  author: { min: 2, max: 30 },
+  name: { min: 1, max: 40 },
+  author: { min: 1, max: 30 },
   message: { min: 5, max: 220 },
 };
 

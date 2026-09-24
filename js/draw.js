@@ -627,15 +627,15 @@ export function createDrawingCanvas(svgEl, options = {}) {
  * fall back to createFinalStrokesReplayPlayer, which just reveals each
  * already-final entry in order. Returns play/pause/replay/setSpeed controls.
  */
-export function createReplayPlayer(svgEl, strokes, { onDone, actions } = {}) {
+export function createReplayPlayer(svgEl, strokes, { onDone, actions, speed = 1 } = {}) {
   if (Array.isArray(actions) && actions.length) {
-    return createActionReplayPlayer(svgEl, actions, { onDone });
+    return createActionReplayPlayer(svgEl, actions, { onDone, speed });
   }
-  return createFinalStrokesReplayPlayer(svgEl, strokes, { onDone });
+  return createFinalStrokesReplayPlayer(svgEl, strokes, { onDone, speed });
 }
 
 /** Fallback replay for flowers with no action log: reveals each final stroke/fill in order. */
-function createFinalStrokesReplayPlayer(svgEl, strokes, { onDone } = {}) {
+function createFinalStrokesReplayPlayer(svgEl, strokes, { onDone, speed = 1 } = {}) {
   svgEl.innerHTML = "";
   const { root, refs } = buildStrokesTree(strokes);
   refs.forEach((r) => {
@@ -645,9 +645,9 @@ function createFinalStrokesReplayPlayer(svgEl, strokes, { onDone } = {}) {
   svgEl.appendChild(root);
 
   let rafId = null;
-  let speed = 1;
   let strokeIndex = 0;
-  let strokeStart = 0;
+  let strokeElapsed = 0;
+  let lastNow = 0;
   let playing = false;
   const MS_PER_STROKE = 650;
 
@@ -671,13 +671,13 @@ function createFinalStrokesReplayPlayer(svgEl, strokes, { onDone } = {}) {
   function tick(now) {
     if (!playing) return;
     if (strokeIndex >= refs.length) { playing = false; onDone?.(); return; }
-    if (!strokeStart) strokeStart = now;
-    const elapsed = (now - strokeStart) * speed;
-    const t = Math.min(1, elapsed / MS_PER_STROKE);
+    if (lastNow) strokeElapsed += (now - lastNow) * speed;
+    lastNow = now;
+    const t = Math.min(1, strokeElapsed / MS_PER_STROKE);
     paintFrame(strokeIndex, t);
     if (t >= 1) {
       strokeIndex += 1;
-      strokeStart = 0;
+      strokeElapsed = 0;
     }
     rafId = requestAnimationFrame(tick);
   }
@@ -685,7 +685,9 @@ function createFinalStrokesReplayPlayer(svgEl, strokes, { onDone } = {}) {
   return {
     play() {
       if (playing) return;
+      if (strokeIndex >= refs.length) { this.replay(); return; }
       playing = true;
+      lastNow = 0;
       rafId = requestAnimationFrame(tick);
     },
     pause() {
@@ -695,9 +697,11 @@ function createFinalStrokesReplayPlayer(svgEl, strokes, { onDone } = {}) {
     replay() {
       this.pause();
       strokeIndex = 0;
-      strokeStart = 0;
+      strokeElapsed = 0;
       resetVisual();
-      this.play();
+      playing = true;
+      lastNow = 0;
+      rafId = requestAnimationFrame(tick);
     },
     setSpeed(v) { speed = v; },
     showFinal() {
@@ -723,12 +727,12 @@ function createFinalStrokesReplayPlayer(svgEl, strokes, { onDone } = {}) {
  * at once; fine at this app's scale (a few dozen entries, a few seconds of
  * animation).
  */
-function createActionReplayPlayer(svgEl, actions, { onDone } = {}) {
+function createActionReplayPlayer(svgEl, actions, { onDone, speed = 1 } = {}) {
   let list = [];
   let rafId = null;
-  let speed = 1;
   let actionIndex = 0;
-  let actionStart = 0;
+  let actionElapsed = 0;
+  let lastNow = 0;
   let playing = false;
   const MS_PER_ACTION = 650;
 
@@ -768,14 +772,14 @@ function createActionReplayPlayer(svgEl, actions, { onDone } = {}) {
   function tick(now) {
     if (!playing) return;
     if (actionIndex >= actions.length) { playing = false; onDone?.(); return; }
-    if (!actionStart) actionStart = now;
-    const elapsed = (now - actionStart) * speed;
-    const t = Math.min(1, elapsed / MS_PER_ACTION);
+    if (lastNow) actionElapsed += (now - lastNow) * speed;
+    lastNow = now;
+    const t = Math.min(1, actionElapsed / MS_PER_ACTION);
     render(previewAt(actions[actionIndex], t));
     if (t >= 1) {
       commitAction(actions[actionIndex]);
       actionIndex += 1;
-      actionStart = 0;
+      actionElapsed = 0;
     }
     rafId = requestAnimationFrame(tick);
   }
@@ -785,7 +789,9 @@ function createActionReplayPlayer(svgEl, actions, { onDone } = {}) {
   return {
     play() {
       if (playing) return;
+      if (actionIndex >= actions.length) { this.replay(); return; }
       playing = true;
+      lastNow = 0;
       rafId = requestAnimationFrame(tick);
     },
     pause() {
@@ -796,9 +802,11 @@ function createActionReplayPlayer(svgEl, actions, { onDone } = {}) {
       this.pause();
       list = [];
       actionIndex = 0;
-      actionStart = 0;
+      actionElapsed = 0;
       render(list);
-      this.play();
+      playing = true;
+      lastNow = 0;
+      rafId = requestAnimationFrame(tick);
     },
     setSpeed(v) { speed = v; },
     showFinal() {

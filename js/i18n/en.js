@@ -79,6 +79,8 @@ export default {
     flowerNamePlaceholder: "Moonflower",
     authorLabel: "Your name (shown as who planted it)",
     authorPlaceholder: "Mika",
+    flowerNameRequired: "Your flower needs a name, even a single letter will do.",
+    authorRequired: "Please leave a name. It doesn't have to be your real one, just a hint of who planted this.",
     step3Next: "Next: leave a message",
     step4Title: "Leave something worth remembering.",
     step4Hint: "Who is this flower for? What would you like it to say?",

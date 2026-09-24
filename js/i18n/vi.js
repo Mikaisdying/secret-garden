@@ -77,6 +77,8 @@ export default {
     flowerNamePlaceholder: "Hoa Nguyệt Quang",
     authorLabel: "Tên của bạn (hiển thị là người đã trồng)",
     authorPlaceholder: "Mika",
+    flowerNameRequired: "Bông hoa cần có một cái tên, một chữ cái thôi cũng được.",
+    authorRequired: "Hãy để lại một cái tên. Không cần là tên thật, chỉ cần là một gợi ý để biết ai đã trồng bông hoa này.",
     step3Next: "Tiếp: viết lời nhắn",
     step4Title: "Để lại điều gì đó đáng nhớ.",
     step4Hint: "Bông hoa này dành cho ai? Bạn muốn nó nói điều gì?",

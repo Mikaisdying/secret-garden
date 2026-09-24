@@ -153,6 +153,7 @@ const storyStack = document.getElementById("storyStack");
 const storyEnvelope = document.getElementById("storyEnvelope");
 let player = null;
 let currentFlower = null;
+let selectedSpeed = 1;
 
 function bringToFront(card) {
   [stampCard, polaroidCard].forEach((c) => c.classList.toggle("is-front", c === card));
@@ -226,6 +227,7 @@ async function openDetail(flower, { front = "drawing" } = {}) {
   if (token !== openToken) return;
   player = createReplayPlayer(replaySvg, flower.strokes, {
     actions,
+    speed: selectedSpeed,
     onDone: () => setReplayToggleState(false),
   });
   player.play();

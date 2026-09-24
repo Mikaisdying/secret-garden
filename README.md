@@ -42,7 +42,8 @@ index.html ──intro animation──▶ garden.html ──shovel button──�
 3. **Plant (`plant.html`)**: a 5-step wizard.
    1. Draw: brush, custom color, size, eraser, fill bucket, undo/redo, clear.
    2. Choose a place on a mini lawn that shows existing flowers.
-   3. Name the flower and the author.
+   3. Name the flower and the author (both required, at least 1 character).
+      An empty field shows a hint under it on blur or when pressing Next.
    4. Write a message (5–220 characters), optionally mark it private and
       pick a wax seal.
    5. Preview, then plant. The page waits for Supabase to save the flower,
@@ -122,7 +123,7 @@ camelCase shape above.
   `getFlowers()` never selects it. `getFlowerActions(id)` loads it only
   when a flower is opened for replay.
 - Length limits (`LIMITS` in `js/data.js`, check constraints in
-  `schema.sql`): name 2–40, author 2–30, message 5–220 characters, trimmed.
+  `schema.sql`): name 1–40, author 1–30, message 5–220 characters, trimmed.
   `strokes` must be a non-empty array of at most 500 KB, and `actions` at
   most 2 MB.
 - Row Level Security: anyone can read and insert. Nobody can update. Rows
