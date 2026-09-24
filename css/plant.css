@@ -44,7 +44,7 @@
   aspect-ratio: 16/10;
   border-radius: 18px;
   overflow: hidden;
-  background: linear-gradient(180deg, #eadfb9 0%, #d7c98f 100%);
+  background: var(--lawn);
   border: 1px solid var(--paper-shadow);
   cursor: crosshair;
   touch-action: none; /* a tap places a marker — don't let the page scroll/zoom under the finger */
@@ -61,7 +61,8 @@
   position: absolute;
   width: 10px; height: 10px;
   border-radius: 50%;
-  background: rgba(91, 111, 78, 0.35);
+  background: rgba(255, 253, 243, 0.55);
+  box-shadow: 0 0 0 1px rgba(67, 90, 43, 0.35);
   transform: translate(-50%, -50%);
 }
 

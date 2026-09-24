@@ -11,45 +11,31 @@ server. Flower data lives in `localStorage`, so the garden persists on your
 own device/browser but isn't yet shared across visitors — see "Going live
 with a real shared garden" below for the one swap that fixes that.
 
-## Running it locally
-
-Because this uses ES modules (`<script type="module">`), open it through a
-local server rather than double-clicking the HTML file (`file://` URLs block
-module imports in most browsers).
-
-```bash
-python3 -m http.server 8000
-# then visit http://localhost:8000
-```
-
-or with Node:
-
-```bash
-npx serve . -l 3000
-# then visit http://localhost:3000
 ```
 
 ## File tree
 
 ```
+
 secret-garden/
-├── index.html            Landing / welcome screen (the hero scene)
-├── garden.html            The shared garden — explore & discover flowers
-├── plant.html              The 5-step "plant a flower" flow
+├── index.html Landing / welcome screen (the hero scene)
+├── garden.html The shared garden — explore & discover flowers
+├── plant.html The 5-step "plant a flower" flow
 ├── css/
-│   ├── tokens.css              Design tokens: color, type scale, spacing, motion
-│   ├── base.css                  Global resets, buttons, fireflies
-│   ├── landing.css                Hero scene layout & illustration layers
-│   ├── garden.css                  Garden scene, flower plots, detail panel
-│   └── plant.css                    Step wizard, drawing toolbar, preview card
+│ ├── tokens.css Design tokens: color, type scale, spacing, motion
+│ ├── base.css Global resets, buttons, fireflies
+│ ├── landing.css Hero scene layout & illustration layers
+│ ├── garden.css Garden scene, flower plots, detail panel
+│ └── plant.css Step wizard, drawing toolbar, preview card
 ├── js/
-│   ├── data.js         Flower storage (localStorage) + seed flowers + plot logic
-│   ├── draw.js           Freehand drawing engine + stroke-by-stroke replay player
-│   ├── landing.js          Procedural trees/grass/fireflies for the hero scene
-│   ├── garden.js            Renders flowers into the garden, opens detail/replay
-│   └── plant.js                Wires up the 5-step planting flow, saves flowers
+│ ├── data.js Flower storage (localStorage) + seed flowers + plot logic
+│ ├── draw.js Freehand drawing engine + stroke-by-stroke replay player
+│ ├── landing.js Procedural trees/grass/fireflies for the hero scene
+│ ├── garden.js Renders flowers into the garden, opens detail/replay
+│ └── plant.js Wires up the 5-step planting flow, saves flowers
 └── README.md
-```
+
+````
 
 ## How the drawing/replay system works
 
@@ -71,14 +57,14 @@ Every flower is stored as **vector stroke data**, not a raster image:
     ...
   ]
 }
-```
+````
 
 (older flowers omit `type` entirely — treated as `"ink"`. Older flowers also
 omit `actions` entirely — see replay below.)
 
 `actions` can be far heavier than `strokes`, and only the replay needs it, so
 `js/data.js` stores it apart from the flower list (one localStorage entry per
-flower). `getFlowers()` returns flowers *without* `actions` — enough to draw
+flower). `getFlowers()` returns flowers _without_ `actions` — enough to draw
 every thumbnail — and the garden calls `getFlowerActions(id)` only when a
 viewer opens a flower. Flowers saved with `actions` embedded are migrated
 automatically on the next `getFlowers()`.
@@ -98,11 +84,11 @@ automatically on the next `getFlowers()`.
   `strokes` is the current, final drawing — what every renderer uses.
   `actions` is a parallel chronological log of the draw/erase/fill/clear
   steps that produced it, saved alongside `strokes` on the flower purely so
-  replay can recreate the actual drawing *process* later (see below) —
+  replay can recreate the actual drawing _process_ later (see below) —
   nothing reads it to render the current state.
 - `createReplayPlayer(svg, strokes, { actions })` — if `actions` is given and
   non-empty, replays that log action by action: an ink stroke grows point by
-  point same as before, but an eraser action grows *its own* recorded path
+  point same as before, but an eraser action grows _its own_ recorded path
   and re-applies the same list-cutting logic the live canvas uses each
   frame, so the cut visibly sweeps through the ink instead of the stroke
   already being split. Without `actions` (older flowers), falls back to
@@ -116,7 +102,7 @@ automatically on the next `getFlowers()`.
 Fill (bucket) finds its boundary by rasterizing the current drawing to a
 throwaway offscreen canvas and flood-filling from the click — this is the one
 place pixels get touched, purely as a lookup. The filled region is traced
-back into one smoothed SVG path via `getSvgPathFromStroke`, and *that* path is
+back into one smoothed SVG path via `getSvgPathFromStroke`, and _that_ path is
 what gets stored and rendered from then on, so the data (and everything drawn
 from it — preview, garden, scaling, `localStorage`) stays vector. A click
 that leaks past the canvas edge, or lands right on ink, fills nothing. A
@@ -149,7 +135,9 @@ their own private garden. To make it genuinely shared:
    export async function getFlowers() {
      const { data } = await supabase
        .from("flowers")
-       .select("id, name, author, message, createdAt, plotX, plotY, scale, hue, strokes, isPrivate, seal");
+       .select(
+         "id, name, author, message, createdAt, plotX, plotY, scale, hue, strokes, isPrivate, seal",
+       );
      return data;
    }
    // Fetched only when a flower is opened for replay.

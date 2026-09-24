@@ -2,6 +2,7 @@ import { addFlower, getFlowers } from "./data.js";
 import { createDrawingCanvas, buildStrokesGroup } from "./draw.js";
 import { initI18n, t, onLanguageChange } from "./i18n/index.js";
 import { SEALS, sealSvgMarkup } from "./seals.js";
+import { paintGrassTufts } from "./scenery.js";
 
 initI18n();
 
@@ -140,6 +141,8 @@ const plotPicker = document.getElementById("plotPicker");
 const plotMarker = document.getElementById("plotMarker");
 const existingDotsLayer = document.getElementById("existingDots");
 const toStep3 = document.getElementById("toStep3");
+
+paintGrassTufts(document.getElementById("pickerGrass"));
 
 getFlowers().forEach((f) => {
   const dot = document.createElement("div");
