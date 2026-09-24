@@ -382,12 +382,12 @@
 
 @media (max-width: 640px) {
   .plant-wrap { padding: calc(var(--space-5) + var(--space-1)) var(--space-2) var(--space-4); }
-  .plant-wrap:has(.plant-step[data-step="1"].is-active) { padding: var(--space-1); }
+  .plant-wrap:has(.plant-step[data-step="1"].is-active) { padding: calc(var(--space-3) + var(--space-1)) var(--space-1) var(--space-1); }
 
-  /* bigger, easier-to-hit touch targets for the drawing tools */
-  .draw-toolbar { position: relative; gap: var(--space-3); padding: var(--space-2) var(--space-2); }
-  .swatch { width: 34px; height: 34px; }
-  .brush-range { width: 100px; }
+  .draw-toolbar { position: relative; gap: var(--space-2); padding: var(--space-1) var(--space-2); }
+  .swatch { width: 26px; height: 26px; }
+  .draw-toolbar .icon-btn { width: 36px; height: 36px; font-size: 0.9rem; }
+  .brush-range { width: 80px; }
   .custom-color-wrap { position: static; }
   .color-popover { top: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
 

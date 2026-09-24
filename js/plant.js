@@ -233,7 +233,7 @@ function renderSealOption(btn, seal) {
 SEALS.forEach((seal, i) => {
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = "seal-option" + (seal.id === state.seal ? " is-selected" : "");
+  btn.className = "seal-option has-tooltip" + (seal.id === state.seal ? " is-selected" : "");
   btn.dataset.seal = seal.id;
   renderSealOption(btn, seal);
   btn.addEventListener("click", () => {

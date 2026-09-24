@@ -84,9 +84,6 @@ function applyTranslations() {
   document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
     el.setAttribute("aria-label", t(el.dataset.i18nAriaLabel));
   });
-  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
-    el.setAttribute("title", t(el.dataset.i18nTitle));
-  });
   document.querySelectorAll("[data-i18n-tooltip]").forEach((el) => {
     el.setAttribute("data-tooltip", t(el.dataset.i18nTooltip));
   });
@@ -130,6 +127,7 @@ function buildSwitcher() {
   });
 
   wrap.append(btn, list);
+  mount.classList.add("has-tooltip", "has-tooltip--below", "has-tooltip--end");
   mount.appendChild(wrap);
 
   let active = -1;
@@ -149,6 +147,7 @@ function buildSwitcher() {
   const sync = () => {
     btnLabel.textContent = LANGUAGES[currentLang].label;
     btn.setAttribute("aria-label", t("common.language"));
+    mount.dataset.tooltip = t("common.language");
     items.forEach((el) => el.setAttribute("aria-selected", String(el.dataset.lang === currentLang)));
   };
 

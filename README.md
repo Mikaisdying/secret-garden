@@ -169,8 +169,11 @@ once and removed by the next top-level garden page, ignored after 30 s):
 ## i18n
 
 Every visible string goes through `t("section.key")` or a `data-i18n`,
-`data-i18n-placeholder`, `data-i18n-aria-label`, `data-i18n-title` or
-`data-i18n-content` attribute. The default language is Vietnamese, and
+`data-i18n-placeholder`, `data-i18n-aria-label`, `data-i18n-tooltip` or
+`data-i18n-content` attribute. Icon-only controls show a `.has-tooltip`
+bubble (`css/base.css`) built from their `aria-label`, or from
+`data-tooltip` on a wrapper when the control itself can't draw
+pseudo-elements (masked swatches, the brush-size range). The default language is Vietnamese, and
 missing keys fall back to English. To add a language, copy `vi.js`,
 translate it, and register it in `LANGUAGES` in `js/i18n/index.js`.
 

@@ -13,7 +13,7 @@
 
 <span class="lang-switcher-fab" data-lang-switcher></span>
 
-<a class="shovel-fab" id="shovelFab" href="plant.html" aria-label="Plant a Flower" data-i18n-aria-label="landing.ctaPlant" title="Plant a Flower" data-i18n-title="landing.ctaPlant">
+<a class="shovel-fab has-tooltip has-tooltip--end" id="shovelFab" href="plant.html" aria-label="Plant a Flower" data-i18n-aria-label="landing.ctaPlant">
   <svg viewBox="0 0 200 400" fill="none" aria-hidden="true">
     <defs>
       <linearGradient id="shovelWood" x1="0" y1="0" x2="1" y2="0">
@@ -40,9 +40,8 @@
   </svg>
 </a>
 
-<button type="button" class="watering-can-fab" id="wateringCan" hidden
+<button type="button" class="watering-can-fab has-tooltip has-tooltip--end" id="wateringCan" hidden
         aria-label="Read every letter" data-i18n-aria-label="garden.wateringCan"
-        title="Read every letter" data-i18n-title="garden.wateringCan"
         aria-haspopup="dialog" aria-controls="galleryOverlay">
   <svg viewBox="0 0 240 200" fill="none" aria-hidden="true">
     <defs>
@@ -84,7 +83,7 @@
   <section class="gallery-panel" role="dialog" aria-modal="true" aria-labelledby="galleryTitle">
     <header class="gallery-panel__head">
       <h2 class="gallery-panel__title" id="galleryTitle" data-i18n="garden.galleryTitle">Every letter in the garden</h2>
-      <button type="button" class="icon-btn icon-btn--sm" id="galleryClose" aria-label="Close" data-i18n-aria-label="garden.close">✕</button>
+      <button type="button" class="icon-btn icon-btn--sm has-tooltip has-tooltip--below has-tooltip--end" id="galleryClose" aria-label="Close" data-i18n-aria-label="garden.close">✕</button>
     </header>
     <ul class="gallery-grid" id="galleryGrid"></ul>
   </section>
@@ -110,9 +109,8 @@
 
 <div class="detail-overlay" id="detailOverlay">
   <div class="detail-panel" role="dialog" aria-modal="true" id="detailPanel">
-    <button type="button" class="detail-panel__trash" id="deleteFlowerBtn" hidden
-            aria-label="Remove this flower" data-i18n-aria-label="garden.deleteFlower"
-            title="Remove this flower" data-i18n-title="garden.deleteFlower">
+    <button type="button" class="detail-panel__trash has-tooltip has-tooltip--below has-tooltip--end" id="deleteFlowerBtn" hidden
+            aria-label="Remove this flower" data-i18n-aria-label="garden.deleteFlower">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v5.5M14 11v5.5"/>
       </svg>
@@ -137,7 +135,7 @@
         </div>
         <div class="detail-panel__controls">
           <div class="speed-dropdown speed-dropdown--sm" id="speedDropdown">
-            <button type="button" class="speed-dropdown__trigger" id="speedDropdownTrigger"
+            <button type="button" class="speed-dropdown__trigger has-tooltip" id="speedDropdownTrigger"
                     aria-haspopup="listbox" aria-expanded="false" aria-label="Drawing speed" data-i18n-aria-label="garden.speedLabel">
               <span id="speedDropdownValue">1.0x</span>
             </button>

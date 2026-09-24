@@ -28,11 +28,21 @@
       <h2 data-i18n="plant.step1Title">Draw your flower.</h2>
       <p class="plant-step__hint" data-i18n="plant.step1Hint">Use your finger, mouse, or stylus. It doesn't need to be perfect.</p>
       <div class="draw-toolbar">
-        <button class="swatch is-selected" style="background:#5b6f4e" data-color="#5b6f4e" aria-label="Moss green" data-i18n-aria-label="plant.swatchMoss"></button>
-        <button class="swatch" style="background:#d8a3a0" data-color="#d8a3a0" aria-label="Dusty pink" data-i18n-aria-label="plant.swatchPink"></button>
-        <button class="swatch" style="background:#c2aed1" data-color="#c2aed1" aria-label="Lavender" data-i18n-aria-label="plant.swatchLavender"></button>
-        <button class="swatch" style="background:#e3b94f" data-color="#e3b94f" aria-label="Soft yellow" data-i18n-aria-label="plant.swatchYellow"></button>
-        <button class="swatch" style="background:#9fc1d0" data-color="#9fc1d0" aria-label="Sky blue" data-i18n-aria-label="plant.swatchBlue"></button>
+        <span class="has-tooltip tooltip-anchor" data-tooltip="Moss green" data-i18n-tooltip="plant.swatchMoss">
+          <button class="swatch is-selected" style="background:#5b6f4e" data-color="#5b6f4e" aria-label="Moss green" data-i18n-aria-label="plant.swatchMoss"></button>
+        </span>
+        <span class="has-tooltip tooltip-anchor" data-tooltip="Dusty pink" data-i18n-tooltip="plant.swatchPink">
+          <button class="swatch" style="background:#d8a3a0" data-color="#d8a3a0" aria-label="Dusty pink" data-i18n-aria-label="plant.swatchPink"></button>
+        </span>
+        <span class="has-tooltip tooltip-anchor" data-tooltip="Lavender" data-i18n-tooltip="plant.swatchLavender">
+          <button class="swatch" style="background:#c2aed1" data-color="#c2aed1" aria-label="Lavender" data-i18n-aria-label="plant.swatchLavender"></button>
+        </span>
+        <span class="has-tooltip tooltip-anchor" data-tooltip="Soft yellow" data-i18n-tooltip="plant.swatchYellow">
+          <button class="swatch" style="background:#e3b94f" data-color="#e3b94f" aria-label="Soft yellow" data-i18n-aria-label="plant.swatchYellow"></button>
+        </span>
+        <span class="has-tooltip tooltip-anchor" data-tooltip="Sky blue" data-i18n-tooltip="plant.swatchBlue">
+          <button class="swatch" style="background:#9fc1d0" data-color="#9fc1d0" aria-label="Sky blue" data-i18n-aria-label="plant.swatchBlue"></button>
+        </span>
         <div class="custom-color-wrap">
           <span class="has-tooltip tooltip-anchor" data-tooltip="Custom color" data-i18n-tooltip="plant.customColor">
             <button
@@ -63,7 +73,9 @@
         </div>
         <div class="toolbar-sep"></div>
         <label for="brushSize" class="visually-hidden" data-i18n="plant.brushSize">Brush size</label>
-        <input type="range" id="brushSize" class="brush-range" min="2" max="14" value="6" />
+        <span class="has-tooltip tooltip-anchor" data-tooltip="Brush size" data-i18n-tooltip="plant.brushSize">
+          <input type="range" id="brushSize" class="brush-range" min="2" max="14" value="6" />
+        </span>
         <div class="toolbar-sep"></div>
         <button class="icon-btn has-tooltip" id="eraseBtn" aria-label="Eraser" data-i18n-aria-label="plant.eraser">⌫</button>
         <button class="icon-btn has-tooltip" id="fillBtn" aria-label="Fill" data-i18n-aria-label="plant.fill">▩</button>
