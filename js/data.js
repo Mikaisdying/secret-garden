@@ -8,6 +8,7 @@
 // ===========================================================
 
 const STORAGE_KEY = "secret-garden.flowers.v1";
+const ACTIONS_KEY_PREFIX = "secret-garden.actions.v1:";
 
 /**
  * @typedef {{x:number,y:number}} StrokePoint
@@ -17,13 +18,17 @@ const STORAGE_KEY = "secret-garden.flowers.v1";
  *   id:string, name:string, author:string, message:string,
  *   createdAt:string, plotX:number, plotY:number, scale:number, hue:number,
  *   strokes:(InkStroke|FillStroke)[],
- *   actions:object[], isPrivate:boolean, seal:(string|null)
+ *   isPrivate:boolean, seal:(string|null)
  * }} Flower
  */
 // `strokes` is the final drawing — what every renderer uses. `actions` is an
 // optional chronological log of draw/erase/fill/clear steps (see js/draw.js)
 // that lets the garden replay the actual drawing process, not just its
 // result; flowers saved before this existed simply omit it.
+// The log can be much heavier than `strokes` (every erased stroke, every
+// undone-then-redone step), and only the replay needs it — so it's stored
+// apart from the flower list, one entry per flower, and fetched on demand
+// via getFlowerActions() when someone opens that flower.
 
 function uid() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -46,6 +51,28 @@ function writeAll(flowers) {
   } catch (e) {
     console.warn("Secret Garden: could not save flower (storage full or blocked)", e);
   }
+}
+
+function writeActions(id, actions) {
+  if (!Array.isArray(actions) || !actions.length) return;
+  try {
+    localStorage.setItem(ACTIONS_KEY_PREFIX + id, JSON.stringify(actions));
+  } catch (e) {
+    console.warn("Secret Garden: could not save drawing history (storage full or blocked)", e);
+  }
+}
+
+/** Moves any `actions` still embedded in the flower list (saved before they
+ * were split out) into their own per-flower entries. Returns true if it did. */
+function migrateEmbeddedActions(flowers) {
+  let moved = false;
+  flowers.forEach((f) => {
+    if (!("actions" in f)) return;
+    writeActions(f.id, f.actions);
+    delete f.actions;
+    moved = true;
+  });
+  return moved;
 }
 
 // A handful of hand-authored strokes so the garden never opens empty.
@@ -127,18 +154,37 @@ function seedFlowers() {
 
 export function getFlowers() {
   const stored = readAll();
-  if (stored && Array.isArray(stored) && stored.length) return stored;
+  if (stored && Array.isArray(stored) && stored.length) {
+    if (migrateEmbeddedActions(stored)) writeAll(stored);
+    return stored;
+  }
   const seeded = seedFlowers();
   writeAll(seeded);
   return seeded;
 }
 
-export function addFlower(flower) {
+/** Stores the flower (without its action log) plus its action log apart.
+ * Returns the saved flower record — like getFlowers(), without `actions`. */
+export function addFlower({ actions, ...flower }) {
   const flowers = getFlowers();
   const withId = { ...flower, id: uid(), createdAt: new Date().toISOString() };
+  writeActions(withId.id, actions);
   flowers.push(withId);
   writeAll(flowers);
   return withId;
+}
+
+/** A flower's drawing-history log for replay, or null if it has none
+ * (seed flowers, flowers planted before the log existed). Async so a
+ * networked backend can fetch it lazily with the same call sites. */
+export async function getFlowerActions(id) {
+  try {
+    const raw = localStorage.getItem(ACTIONS_KEY_PREFIX + id);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    console.warn("Secret Garden: could not read drawing history", e);
+    return null;
+  }
 }
 
 export function getFlowerById(id) {

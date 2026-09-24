@@ -76,6 +76,13 @@ Every flower is stored as **vector stroke data**, not a raster image:
 (older flowers omit `type` entirely — treated as `"ink"`. Older flowers also
 omit `actions` entirely — see replay below.)
 
+`actions` can be far heavier than `strokes`, and only the replay needs it, so
+`js/data.js` stores it apart from the flower list (one localStorage entry per
+flower). `getFlowers()` returns flowers *without* `actions` — enough to draw
+every thumbnail — and the garden calls `getFlowerActions(id)` only when a
+viewer opens a flower. Flowers saved with `actions` embedded are migrated
+automatically on the next `getFlowers()`.
+
 `js/draw.js` exports:
 
 - `createDrawingCanvas(svg, opts)` — attaches Pointer Events (mouse, touch,
@@ -138,9 +145,21 @@ their own private garden. To make it genuinely shared:
    import { createClient } from "@supabase/supabase-js";
    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+   // Everything except the heavy `actions` column.
    export async function getFlowers() {
-     const { data } = await supabase.from("flowers").select("*");
+     const { data } = await supabase
+       .from("flowers")
+       .select("id, name, author, message, createdAt, plotX, plotY, scale, hue, strokes, isPrivate, seal");
      return data;
+   }
+   // Fetched only when a flower is opened for replay.
+   export async function getFlowerActions(id) {
+     const { data } = await supabase
+       .from("flowers")
+       .select("actions")
+       .eq("id", id)
+       .single();
+     return data?.actions ?? null;
    }
    export async function addFlower(flower) {
      const { data } = await supabase

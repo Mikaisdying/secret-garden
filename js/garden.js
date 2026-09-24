@@ -1,4 +1,4 @@
-import { getFlowers, formatDate } from "./data.js";
+import { getFlowers, getFlowerActions, formatDate } from "./data.js";
 import { buildStrokesGroup, createReplayPlayer } from "./draw.js";
 import { initI18n, t, getLocale, onLanguageChange } from "./i18n/index.js";
 import { initEnvironment } from "./environment.js";
@@ -225,7 +225,12 @@ function setReplayToggleState(isPlaying) {
   replayToggle.setAttribute("aria-label", t(key));
 }
 
-function openDetail(flower) {
+// Bumped on every open/close so a slow actions fetch for a flower the viewer
+// has already closed (or moved on from) never hijacks the replay.
+let openToken = 0;
+
+async function openDetail(flower) {
+  const token = ++openToken;
   currentFlower = flower;
   detailPanel.setAttribute("aria-label", flower.name);
   document.getElementById("detailName").textContent = flower.name;
@@ -235,20 +240,25 @@ function openDetail(flower) {
   player?.pause();
   player = null;
   setReplayToggleState(false);
-  if (!locked) {
-    bringToFront(polaroidCard);
-    player = createReplayPlayer(replaySvg, flower.strokes, {
-      actions: flower.actions,
-      onDone: () => setReplayToggleState(false),
-    });
-    setTimeout(() => {
-      player.play();
-      setReplayToggleState(true);
-    }, 250);
-  }
+  if (locked) return;
+  bringToFront(polaroidCard);
+  // The action log is only loaded here, when a flower is actually opened —
+  // the garden itself only needs `strokes` for the thumbnails.
+  const [actions] = await Promise.all([
+    getFlowerActions(flower.id),
+    new Promise((resolve) => setTimeout(resolve, 250)),
+  ]);
+  if (token !== openToken) return;
+  player = createReplayPlayer(replaySvg, flower.strokes, {
+    actions,
+    onDone: () => setReplayToggleState(false),
+  });
+  player.play();
+  setReplayToggleState(true);
 }
 
 function closeDetail() {
+  openToken++;
   overlay.classList.remove("is-open");
   player?.pause();
   setReplayToggleState(false);
