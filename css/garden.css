@@ -311,6 +311,11 @@
   /* aspect ratio matches the stamp mask SVG so the perforated edge never stretches */
   aspect-ratio: 707.0436754985712 / 541.7181613150751;
   transform: translateY(-50%) rotate(-4deg);
+  filter: drop-shadow(0 0 0 transparent);
+  transition:
+    transform var(--dur-med) var(--ease-soft),
+    filter var(--dur-med) var(--ease-soft),
+    opacity var(--dur-med) var(--ease-soft);
 }
 /* Real masked element instead of box-shadow, so the shadow follows the perforated silhouette. */
 .story-card--stamp::before {
@@ -326,6 +331,9 @@
   mask-repeat: no-repeat;
   transform: translate(0, 3px);
   z-index: -1;
+  transition:
+    transform var(--dur-med) var(--ease-soft),
+    background var(--dur-med) var(--ease-soft);
 }
 .story-card--stamp__surface {
   width: 100%;
