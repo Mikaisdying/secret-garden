@@ -92,8 +92,8 @@ function spawnRainDrops() {
 function flowerThumb(flower) {
   const wrap = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   wrap.setAttribute("viewBox", "0 0 120 120");
-  wrap.setAttribute("width", "64");
-  wrap.setAttribute("height", "64");
+  wrap.setAttribute("width", "60");
+  wrap.setAttribute("height", "60");
   wrap.appendChild(buildStrokesGroup(flower.strokes));
   return wrap;
 }
